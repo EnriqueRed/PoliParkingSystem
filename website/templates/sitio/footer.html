@@ -15,16 +15,16 @@
         <a href="#" class="back-to-top d-flex align-items-center justify-content-center"><i class="bi bi-arrow-up-short"></i></a>
 
         <!-- poliparking JS -->
-        <script src="static/js/apexcharts/apexcharts.min.js"></script>
-        <script src="static/poliparking/bootstrap/js/bootstrap.bundle.min.js"></script>
-        <script src="static/poliparking/chart.js/chart.min.js"></script>
-        <script src="static/poliparking/echarts/echarts.min.js"></script>
-        <script src="static/poliparking/quill/quill.min.js"></script>
-        <script src="static/poliparking/simple-datatables/simple-datatables.js"></script>
-        <script src="static/poliparking/tinymce/tinymce.min.js"></script>
-        <script src="static/poliparking/php-email-form/validate.js"></script>
+        <script src="{{ url_for('static', filename= '/js/apexcharts/apexcharts.min.js') }}"></script>
+        <script src="{{ url_for('static', filename= '/poliparking/bootstrap/js/bootstrap.bundle.min.js') }}"></script>
+        <script src="{{ url_for('static', filename= '/poliparking/chart.js/chart.min.js') }}"></script>
+        <script src="{{ url_for('static', filename= '/poliparking/echarts/echarts.min.js') }}"></script>
+        <script src="{{ url_for('static', filename= '/poliparking/quill/quill.min.js') }}"></script>
+        <script src="{{ url_for('static', filename= '/poliparking/simple-datatables/simple-datatables.js') }}"></script>
+        <script src="{{ url_for('static', filename= '/poliparking/tinymce/tinymce.min.js') }}"></script>
+        <script src="{{ url_for('static', filename= '/poliparking/php-email-form/validate.js') }}"></script>
 
         <!-- Template Main JS File -->
-        <script src="static/js/main.js"></script>
+        <script src="{{ url_for('static', filename= '/js/main.js') }}"></script>
     </body>
 </html>

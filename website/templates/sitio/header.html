@@ -1,26 +1,26 @@
 <!doctype html>
 <html lang="en">
     <head>
-        <title>Sistema Gestión Parqueaderos Politécnico Grancolombiano</title>
+        <title>{% block title %}Sistema Gestión Parqueaderos Politécnico Grancolombiano{% endblock %}</title>
         <!-- Required meta tags -->
         <meta charset="utf-8">
         <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
 
         <!-- PoliParking CSS -->
-        <link href="static/poliparking/bootstrap/css/bootstrap.min.css" rel="stylesheet">
-        <link href="static/poliparking/bootstrap-icons/bootstrap-icons.css" rel="stylesheet">
-        <link href="static/poliparking/boxicons/css/boxicons.min.css" rel="stylesheet">
-        <link href="static/poliparking/quill/quill.snow.css" rel="stylesheet">
-        <link href="static/poliparking/quill/quill.bubble.css" rel="stylesheet">
-        <link href="static/poliparking/remixicon/remixicon.css" rel="stylesheet">
-        <link href="static/poliparking/simple-datatables/style.css" rel="stylesheet">
+        <link href="{{ url_for('static', filename= '/poliparking/bootstrap/css/bootstrap.min.css') }}" rel="stylesheet">
+        <link href="{{ url_for('static', filename= '/poliparking/bootstrap-icons/bootstrap-icons.css') }}" rel="stylesheet">
+        <link href="{{ url_for('static', filename= '/poliparking/boxicons/css/boxicons.min.css') }}" rel="stylesheet">
+        <link href="{{ url_for('static', filename= '/poliparking/quill/quill.snow.css') }}" rel="stylesheet">
+        <link href="{{ url_for('static', filename= '/poliparking/quill/quill.bubble.css') }}" rel="stylesheet">
+        <link href="{{ url_for('static', filename= '/poliparking/remixicon/remixicon.css') }}" rel="stylesheet">
+        <link href="{{ url_for('static', filename= '/poliparking/simple-datatables/style.css') }}" rel="stylesheet">
         
         <!-- Google Fonts -->
         <link href="https://fonts.gstatic.com" rel="preconnect">
         <link href="https://fonts.googleapis.com/css?family=Open+Sans:300,300i,400,400i,600,600i,700,700i|Nunito:300,300i,400,400i,600,600i,700,700i|Poppins:300,300i,400,400i,500,500i,600,600i,700,700i" rel="stylesheet">
         
         <!-- Plantilla principal -->
-        <link href="static/css/style.css" rel="stylesheet">
+        <link href="{{ url_for('static', filename= '/css/style.css') }}" rel="stylesheet">
     </head>
 
     <body>
@@ -28,7 +28,7 @@
 
             <div class="d-flex align-items-center justify-content-between">
             <a href="sitio/index.html" class="logo d-flex align-items-center">
-                <img src="static/img/polilogo.png" alt="">
+                <img src="{{ url_for('static', filename= '/img/polilogo.png') }}" alt="">
                 <span class="d-none d-lg-block">Parking System</span>
             </a>
             <i class="bi bi-list toggle-sidebar-btn"></i>
@@ -91,7 +91,7 @@
                 <li class="nav-item dropdown pe-3">
 
                 <a class="nav-link nav-profile d-flex align-items-center pe-0" href="#" data-bs-toggle="dropdown">
-                    <img src="static/img/profile_image.jpg" alt="Profile" class="rounded-circle">
+                    <img src="{{ url_for('static', filename= '/img/profile_image.jpg') }}" alt="Profile" class="rounded-circle">
                     <span class="d-none d-md-block dropdown-toggle ps-2">Enrique R</span>
                 </a><!-- End Profile Iamge Icon -->
 
@@ -125,9 +125,9 @@
                     </li>
 
                     <li>
-                    <a class="dropdown-item d-flex align-items-center" href="#">
+                    <a class="dropdown-item d-flex align-items-center" href="{{ url_for('auth.logout') }}">
                         <i class="bi bi-box-arrow-right"></i>
-                        <span>Sign Out</span>
+                        <span>Cerrar sesión</span>
                     </a>
                     </li>
 
@@ -199,9 +199,9 @@
             </li><!-- End Vehículos Nav -->
 
             <li class="nav-item">
-                <a class="nav-link collapsed" href="pages-login.html">
+                <a class="nav-link collapsed" href="{{ url_for('auth.logout') }}">
                 <i class="bi bi-box-arrow-in-right"></i>
-                <span>Login</span>
+                <span>Cerrar sesión</span>
                 </a>
             </li><!-- End Login Page Nav -->
             </ul>
