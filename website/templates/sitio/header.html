@@ -13,7 +13,7 @@
         <link href="{{ url_for('static', filename= '/poliparking/quill/quill.snow.css') }}" rel="stylesheet">
         <link href="{{ url_for('static', filename= '/poliparking/quill/quill.bubble.css') }}" rel="stylesheet">
         <link href="{{ url_for('static', filename= '/poliparking/remixicon/remixicon.css') }}" rel="stylesheet">
-        <link href="{{ url_for('static', filename= '/poliparking/simple-datatables/style.css') }}" rel="stylesheet">
+        <!-- <link href="{{ url_for('static', filename= '/poliparking/simple-datatables/style.css') }}" rel="stylesheet"> -->
         
         <!-- Google Fonts -->
         <link href="https://fonts.gstatic.com" rel="preconnect">
@@ -21,6 +21,10 @@
         
         <!-- Plantilla principal -->
         <link href="{{ url_for('static', filename= '/css/style.css') }}" rel="stylesheet">
+
+        <!-- Datatables -->
+        <link rel="stylesheet" type="text/css" href="https://cdn.datatables.net/1.12.1/css/jquery.dataTables.min.css" />
+        <link rel="stylesheet" type="text/css" href="https://cdn.datatables.net/responsive/2.3.0/css/responsive.dataTables.min.css" />
     </head>
 
     <body>
@@ -92,7 +96,7 @@
 
                 <a class="nav-link nav-profile d-flex align-items-center pe-0" href="#" data-bs-toggle="dropdown">
                     <img src="{{ url_for('static', filename= '/img/profile_image.jpg') }}" alt="Profile" class="rounded-circle">
-                    <span class="d-none d-md-block dropdown-toggle ps-2">Enrique R</span>
+                    <span class="d-none d-md-block dropdown-toggle ps-2">...</span>
                 </a><!-- End Profile Iamge Icon -->
 
                 <ul class="dropdown-menu dropdown-menu-end dropdown-menu-arrow profile">
@@ -192,7 +196,7 @@
             </li><!-- End Usuarios Nav -->
 
             <li class="nav-item">
-                <a class="nav-link collapsed" href="pages-faq.html">
+                <a class="nav-link collapsed" href="/vehiculo">
                 <i class="bi bi-car-front"></i>
                 <span>Vehículos</span>
                 </a>

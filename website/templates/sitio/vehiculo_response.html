@@ -1,0 +1,55 @@
+<section class="section">
+    <div class="row">
+        <div class="col-lg-12">
+            <div class="card">
+                <div class="card-body">
+                    <br>
+                    <form action="/vehiculo/editar" method="post" id="editvehiculo">
+                        <div class="row mb-3">
+                            <div class="col-sm-2">
+                                <input type="text" class="form-control" name="id_v" value="{{context['vehicle'].id}}" readonly hidden> 
+                            </div>
+                        </div>
+
+                        <div class="row mb-3">
+                            <label for="placa" class="col-sm-2 offset-sm-1 col-form-label">Placa</label>
+                            <div class="col-sm-2">
+                                <input type="text" class="form-control" name="placa" value="{{context['vehicle'].placa}}" required> 
+                            </div>
+                        </div>
+
+                        <div class="row mb-3">
+                            <label class="col-sm-2 offset-sm-1 col-form-label">Usuario</label>
+                            <div class="col-sm-6">
+                                <select class="form-select" aria-label="Default select example" name="usuario" required>
+                                    <option value="{{context['vehicle'].u_id}}" selected>{{context['vehicle'].nombre}} | {{context['vehicle'].usuario}}</option>
+                                    {% for row in context["lista_users"] %}
+                                    <option value={{row.id}}>{{row.nombre}} | {{row.usuario}}</option>
+                                    {% endfor %}
+                                </select>
+                            </div>
+                        </div>
+          
+                        <div class="row mb-3">
+                            <label class="col-sm-2 offset-sm-1 col-form-label">Tipo</label>
+                            <div class="col-sm-6">
+                                <select class="form-select" aria-label="Default select example" name="tipo" required>
+                                    <option value="{{context['vehicle'].t_id}}" selected>{{context['vehicle'].tipo}}</option>
+                                    {% for row in context["lista_tipos"] %}
+                                    <option value={{row.id}}>{{row.nombre}}</option>
+                                    {% endfor %}
+                                </select>
+                            </div>
+                        </div>
+                        <br>
+                        <div class="text-center">
+                            <button type="submit" class="btn btn-primary">Guardar</button>
+                            <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancelar</button>
+                        </div>
+                    </form>
+
+                </div>
+            </div>
+        </div>
+    </div>
+</section>

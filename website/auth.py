@@ -45,12 +45,15 @@ def register():
                 flash('Ya existe un usuario con el correo ingresado. Por favor verifique!', category='error')
                 return render_template('/admin/register.html')
             else:
-                new_user = User(nombre= name,
-                                email= email,
-                                usuario= username,
-                                password= generate_password_hash(password, method='sha256'))
-                db.session.add(new_user)
-                db.session.commit()
+                try:
+                    new_user = User(nombre= name,
+                                    email= email,
+                                    usuario= username,
+                                    password= generate_password_hash(password, method='sha256'))
+                    db.session.add(new_user)
+                    db.session.commit()
+                except:
+                    db.session.rollback()
 
                 login_user(new_user, remember=True)
                 return redirect(url_for('views.inicio'))

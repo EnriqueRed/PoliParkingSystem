@@ -1,0 +1,164 @@
+{% include 'sitio/header.html' %}
+
+<main id="main" class="main">
+    <div class="card">
+        <div class="card-body">
+            <h5 class="card-title">Lista de Vehículos</h5>
+
+            <button type="button" class="btn btn-outline-primary" data-bs-toggle="modal" data-bs-target="#vehiculoModal">
+                Crear Vehículo
+            </button>
+            <br><br>
+            <div class="col-sm-10 offset-sm-1">
+                <!-- <input type="text" id="filter_vehiculo" placeholder="Buscar..."> -->
+                <table class="table table-hover" id="tbl_vehiculo">
+                    <thead>
+                        <tr>
+                            <!-- <th hidden="true">ID</th> -->
+                            <th>Usuario</th>
+                            <th>Placa</th>
+                            <th>Tipo Vehículo</th>
+                            <th></th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for row in context["lista_vehiculo"] %}
+                        <tr>
+                            <!-- <td hidden="true">{{row.id}}</td> -->
+                            <td>{{row.nombre}}</td>
+                            <td>{{row.placa}}</td>
+                            <td>{{row.tipo}}</td>
+                            <td>
+                                <button data-id="{{row.id}}" type="button" class="edit btn btn-primary"><i class="ri-edit-box-line"></i></button>
+                                <button data-id="{{row.id}}" type="button" class="delete btn btn-danger"><i class="ri-delete-bin-6-line"></i></button>
+                            </td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>	
+        </div>
+    </div>
+</main>
+
+<div class="modal fade" id="vehiculoModal" tabindex="-1" role="dialog">
+    <div class="modal-dialog modal-lg" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-tittle">Crear Vehículo</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Cerrar"></button>
+            </div>
+
+            <div class="modal-body">
+                <section class="section">
+                    <div class="row">
+                        <div class="col-lg-12">
+                            <div class="card">
+                                <div class="card-body">
+                                    <br>
+                                    <form action="/vehiculo/crear" method="post" id="addvehiculo">
+                                        <div class="row mb-3">
+                                            <label for="placa" class="col-sm-2 offset-sm-1 col-form-label">Placa</label>
+                                            <div class="col-sm-2">
+                                                <input type="text" class="form-control" name="placa" required> 
+                                            </div>
+                                        </div>
+            
+                                        <div class="row mb-3">
+                                            <label class="col-sm-2 offset-sm-1 col-form-label">Usuario</label>
+                                            <div class="col-sm-6">
+                                                <select class="form-select" aria-label="Default select example" name="usuario" required>
+                                                    <option value="" selected>Seleccionar opción</option>
+                                                    {% for row in context["lista_users"] %}
+                                                    <option value={{row.id}}>{{row.nombre}} | {{row.usuario}}</option>
+                                                    {% endfor %}
+                                                </select>
+                                            </div>
+                                        </div>
+                          
+                                        <div class="row mb-3">
+                                            <label class="col-sm-2 offset-sm-1 col-form-label">Tipo</label>
+                                            <div class="col-sm-6">
+                                                <select class="form-select" aria-label="Default select example" name="tipo" required>
+                                                    <option value="" selected>Seleccionar opción</option>
+                                                    {% for row in context["lista_tipos"] %}
+                                                    <option value={{row.id}}>{{row.nombre}}</option>
+                                                    {% endfor %}
+                                                </select>
+                                            </div>
+                                        </div>
+                                        <br>
+                                        <div class="text-center">
+                                            <button type="submit" class="btn btn-primary">Guardar</button>
+                                            <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancelar</button>
+                                        </div>
+                                    </form>
+            
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </section>
+            </div>
+        </div>
+    </div>
+</div>
+
+
+<div class="modal fade" id="vehiculoEditModal" tabindex="-1" role="dialog">
+    <div class="modal-dialog modal-lg" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-tittle">Modificar Vehículo</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Cerrar"></button>
+            </div>
+
+            <div class="modal-body" id="modaleditbody">
+                
+            </div>
+        </div>
+    </div>
+</div>
+
+{% include 'sitio/footer.html' %}
+
+<script>
+    $(document).ready(function(){
+        var dataTable = $('#tbl_vehiculo').DataTable( {            
+            dom: 'Bfrtip',
+            pageLength: 4,
+            buttons: {
+                name: 'primary',
+                buttons: ['excel','pdf']
+            },
+        });
+
+        $('.edit').click(function(){
+            var vehiculoid = $(this).data('id');
+            $.ajax({
+                url: '/ajax_get_vehiculo_id',
+                type: 'post',
+                data: {vehiculoid: vehiculoid},
+                success: function(data){
+                    $('#modaleditbody').html(data);
+                    $('#modaleditbody').append(data.htmlresponse);
+                    $('#vehiculoEditModal').modal('show');
+                }
+            });
+        });
+
+        $('.delete').click(function(){
+            if (confirm('Esta seguro que desesea eliminar el registro?')) {
+                var vehiculoid = $(this).data('id');
+                $.ajax({
+                    url: '/ajax_delete_vehiculo_id',
+                    type: 'post',
+                    data: {vehiculoid: vehiculoid},
+                    success: function(data){
+                        location.reload();
+                    }
+                });
+            }
+        });
+    });
+</script>
