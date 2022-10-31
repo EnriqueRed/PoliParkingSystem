@@ -47,6 +47,7 @@ class MovimientoVehiculo(db.Model):
 class Parqueadero(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     nombre = db.Column(db.String(150))
+    direccion = db.Column(db.String(200))
     capacidad_carros = db.Column(db.Integer)
     capacidad_motos = db.Column(db.Integer)
     

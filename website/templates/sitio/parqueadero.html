@@ -1,7 +1,160 @@
 {% include 'sitio/header.html' %}
 
 <main id="main" class="main">
+    <div class="card">
+        <div class="card-body">
+            <h5 class="card-title">Lista de Parqueaderos</h5>
 
-</main><!-- End #main -->
+            <button type="button" class="btn btn-outline-primary" data-bs-toggle="modal" data-bs-target="#parqueaderoModal">
+                Crear Parqueadero
+            </button>
+            <br><br>
+            <div class="col-sm-10 offset-sm-1">
+                <table class="table table-hover" id="tbl_parqueadero">
+                    <thead>
+                        <tr>
+                            <th>Nombre</th>
+                            <th>Capacidad (carros)</th>
+                            <th>Capacidad (motos)</th>
+                            <th>Dirección</th>
+                            <th></th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for row in context["lista_parqueadero"] %}
+                        <tr>
+                            <td>{{row.nombre}}</td>
+                            <td>{{row.capacidad_carros}}</td>
+                            <td>{{row.capacidad_motos}}</td>
+                            <td>{{row.direccion}}</td>
+                            <td>
+                                <button data-id="{{row.id}}" type="button" class="edit btn btn-primary"><i class="ri-edit-box-line"></i></button>
+                                <button data-id="{{row.id}}" type="button" class="delete btn btn-danger"><i class="ri-delete-bin-6-line"></i></button>
+                            </td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>	
+        </div>
+    </div>
+</main>
+
+<div class="modal fade" id="parqueaderoModal" tabindex="-1" role="dialog">
+    <div class="modal-dialog modal-lg" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-tittle">Crear Parqueadero</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Cerrar"></button>
+            </div>
+
+            <div class="modal-body">
+                <section class="section">
+                    <div class="row">
+                        <div class="col-lg-12">
+                            <div class="card">
+                                <div class="card-body">
+                                    <br>
+                                    <form action="/parqueadero/crear" method="post" id="addparqueadero">
+                                        <div class="row mb-3">
+                                            <label for="nombre" class="col-sm-2 offset-sm-1 col-form-label">Nombre</label>
+                                            <div class="col-sm-6">
+                                                <input type="text" class="form-control" name="nombre" required> 
+                                            </div>
+                                        </div>
+            
+                                        <div class="row mb-3">
+                                            <label for="c_carros" class="col-sm-2 offset-sm-1 col-form-label">Capacidad (carros)</label>
+                                            <div class="col-sm-6">
+                                                <input type="number" class="form-control" name="c_carros" required> 
+                                            </div>
+                                        </div>
+
+                                        <div class="row mb-3">
+                                            <label for="c_motos" class="col-sm-2 offset-sm-1 col-form-label">Capacidad (motos)</label>
+                                            <div class="col-sm-6">
+                                                <input type="number" class="form-control" name="c_motos" required> 
+                                            </div>
+                                        </div>
+
+                                        <div class="row mb-3">
+                                            <label for="direccion" class="col-sm-2 offset-sm-1 col-form-label">Dirección</label>
+                                            <div class="col-sm-6">
+                                                <input type="text" class="form-control" name="direccion" required> 
+                                            </div>
+                                        </div>
+                                        <br>
+                                        <div class="text-center">
+                                            <button type="submit" class="btn btn-primary">Guardar</button>
+                                            <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancelar</button>
+                                        </div>
+                                    </form>
+            
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </section>
+            </div>
+        </div>
+    </div>
+</div>
+
+
+<div class="modal fade" id="parqueaderoEditModal" tabindex="-1" role="dialog">
+    <div class="modal-dialog modal-lg" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-tittle">Modificar Parqueadero</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Cerrar"></button>
+            </div>
+
+            <div class="modal-body" id="modaleditbody">
+                
+            </div>
+        </div>
+    </div>
+</div>
 
 {% include 'sitio/footer.html' %}
+
+<script>
+    $(document).ready(function(){
+        var dataTable = $('#tbl_parqueadero').DataTable( {            
+            dom: 'Bfrtip',
+            pageLength: 4,
+            buttons: {
+                name: 'primary',
+                buttons: ['excel','pdf']
+            },
+        });
+
+        $('.edit').click(function(){
+            var parqueaderoid = $(this).data('id');
+            $.ajax({
+                url: '/ajax_get_parqueadero_id',
+                type: 'post',
+                data: {parqueaderoid: parqueaderoid},
+                success: function(data){
+                    $('#modaleditbody').html(data);
+                    $('#modaleditbody').append(data.htmlresponse);
+                    $('#parqueaderoEditModal').modal('show');
+                }
+            });
+        });
+
+        $('.delete').click(function(){
+            if (confirm('Esta seguro que desesea eliminar el registro?')) {
+                var parqueaderoid = $(this).data('id');
+                $.ajax({
+                    url: '/ajax_delete_parqueadero_id',
+                    type: 'post',
+                    data: {parqueaderoid: parqueaderoid},
+                    success: function(data){
+                        location.reload();
+                    }
+                });
+            }
+        });
+    });
+</script>

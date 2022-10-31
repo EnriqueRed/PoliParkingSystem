@@ -15,7 +15,9 @@ def create_app():
     
     migrate.init_app(app, db)
     
-    from .views import views
+    from .views.main import main
+    from .views.vehicles import vehicles
+    from .views.parking import parkings
     from .auth import auth
 
     # Login Manager
@@ -27,8 +29,10 @@ def create_app():
     def load_user(id):
         return User.query.get(int(id))
 
-    app.register_blueprint(views, url_prefix='/')
+    app.register_blueprint(main, url_prefix='/')
     app.register_blueprint(auth, url_prefix='/')
+    app.register_blueprint(vehicles, url_prefix='/')
+    app.register_blueprint(parkings, url_prefix='/')
 
     from .models import User, Rol
 

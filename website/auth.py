@@ -16,7 +16,7 @@ def login():
         if user:
             if check_password_hash(user.password, password):
                 login_user(user, remember=True)
-                return redirect(url_for('views.inicio'))
+                return redirect(url_for('main.inicio'))
             else:
                 flash('El usuario o contraseña es inválido. Por favor verifique!', category='error')
         else:
@@ -56,7 +56,7 @@ def register():
                     db.session.rollback()
 
                 login_user(new_user, remember=True)
-                return redirect(url_for('views.inicio'))
+                return redirect(url_for('main.inicio'))
     
     return render_template('/admin/register.html')
 
