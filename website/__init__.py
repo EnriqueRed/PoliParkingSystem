@@ -18,6 +18,7 @@ def create_app():
     from .views.main import main
     from .views.vehicles import vehicles
     from .views.parking import parkings
+    from .views.movvehicle import mov_vehicles
     from .auth import auth
 
     # Login Manager
@@ -33,6 +34,7 @@ def create_app():
     app.register_blueprint(auth, url_prefix='/')
     app.register_blueprint(vehicles, url_prefix='/')
     app.register_blueprint(parkings, url_prefix='/')
+    app.register_blueprint(mov_vehicles, url_prefix='/')
 
     from .models import User, Rol
 

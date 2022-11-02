@@ -15,6 +15,8 @@ class User(db.Model, UserMixin):
     password = db.Column(db.String(150))    
     imagen = db.Column(db.Text)
     rol_id = db.Column(db.Integer, db.ForeignKey('rol.id'))
+    es_propietario = db.Column(db.Boolean)
+    parqueadero_id = db.Column(db.Integer, db.ForeignKey('parqueadero.id'))
 
 # Roles
 class Rol(db.Model):
@@ -37,9 +39,10 @@ class Tipovehiculo(db.Model):
 # Movimiento de vehículos
 class MovimientoVehiculo(db.Model):
     id = db.Column(db.Integer, primary_key=True)
-    fecha_ingreso = db.Column(db.DateTime(timezone=True), default=func.now())
-    fecha_salida = db.Column(db.DateTime(timezone=True), default=func.now())
+    fecha_ingreso = db.Column(db.DateTime(timezone=False))
+    fecha_salida = db.Column(db.DateTime(timezone=False))
     estado = db.Column(db.String(20))
+    minutos = db.Column(db.Integer)
     vehiculo_id = db.Column(db.Integer, db.ForeignKey('vehiculo.id'))
     parqueadero_id = db.Column(db.Integer, db.ForeignKey('parqueadero.id'))
 
