@@ -45,7 +45,7 @@ def ajax_register_mov():
                 "option_id": optionid,
                 "parqueadero": parkings,
                 "lista_vehiculos": vehicles,
-                "estado": 'Ninguno'}    
+                "date_a": datetime.today().date()}    
 
     return jsonify({'htmlresponse': render_template('/sitio/movimiento_vehiculos/registrar_mov.html', context=contexto)})
 
