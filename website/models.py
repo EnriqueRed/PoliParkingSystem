@@ -17,6 +17,7 @@ class User(db.Model, UserMixin):
     rol_id = db.Column(db.Integer, db.ForeignKey('rol.id'))
     es_propietario = db.Column(db.Boolean)
     parqueadero_id = db.Column(db.Integer, db.ForeignKey('parqueadero.id'))
+    fecha_creacion = db.Column(db.DateTime(timezone=True), server_default=func.now())
 
 # Roles
 class Rol(db.Model):

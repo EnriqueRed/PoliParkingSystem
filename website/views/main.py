@@ -12,10 +12,7 @@ def login():
     return render_template('/admin/login.html')
 
 # Index ---------------------------------------------------------------------------
-@main.route('/inicio')
-@login_required
-def inicio():
-    return render_template('/sitio/index.html')
+
 
 # Movimiento de vehiculos ----------------------------------------------------------
 @main.route('/vehiculo_mov/lista', methods=['GET'])
