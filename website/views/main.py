@@ -9,7 +9,7 @@ main = Blueprint('main', __name__)
 
 @main.route('/')
 def login():
-    return render_template('/admin/login.html')
+    return redirect(url_for('dashboard.inicio'))
 
 # Index ---------------------------------------------------------------------------
 

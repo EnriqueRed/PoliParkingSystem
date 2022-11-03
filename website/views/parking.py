@@ -18,6 +18,7 @@ def get_parqueadero():
     return render_template('/sitio/parqueadero.html', context=contexto)
 
 @parkings.route('/parqueadero/crear', methods=['POST'])
+@login_required
 def crear_parqueadero():
     if request.method == 'POST':
         tmp_nombre = request.form.get('nombre')
@@ -39,6 +40,7 @@ def crear_parqueadero():
         return redirect(url_for('parkings.get_parqueadero'))
 
 @parkings.route('/parqueadero/editar', methods=['POST'])
+@login_required
 def editar_parqueadero():
     if request.method == 'POST':
         id_p = request.form.get('id_p')
@@ -61,6 +63,7 @@ def editar_parqueadero():
         return redirect(url_for('parkings.get_parqueadero'))
 
 @parkings.route('/ajax_get_parqueadero_id', methods=['GET','POST'])
+@login_required
 def get_parqueadero_id():
     if request.form['parqueaderoid']:
         parqueaderoid = int(request.form['parqueaderoid'])
@@ -75,6 +78,7 @@ def get_parqueadero_id():
     return jsonify({'htmlresponse': render_template('/sitio/parqueadero_response.html', context=contexto)})
 
 @parkings.route('/ajax_delete_parqueadero_id', methods=['GET','POST'])
+@login_required
 def delete_parqueadero_id():
     if request.form['parqueaderoid']:
         parqueaderoid = int(request.form['parqueaderoid'])

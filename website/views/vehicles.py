@@ -22,6 +22,7 @@ def get_vehiculo():
     return render_template('/sitio/vehiculo.html', context=contexto)
 
 @vehicles.route('/vehiculo/crear', methods=['POST'])
+@login_required
 def crear_vehiculo():
     if request.method == 'POST':
         tmp_placa = request.form.get('placa')
@@ -42,6 +43,7 @@ def crear_vehiculo():
         return redirect(url_for('vehicles.get_vehiculo'))
 
 @vehicles.route('/vehiculo/editar', methods=['POST'])
+@login_required
 def editar_vehiculo():
     if request.method == 'POST':
         tmp_placa = request.form.get('placa')
@@ -62,6 +64,7 @@ def editar_vehiculo():
         return redirect(url_for('vehicles.get_vehiculo'))
 
 @vehicles.route('/ajax_get_vehiculo_id', methods=['GET','POST'])
+@login_required
 def get_vehiculo_id():
     if request.form['vehiculoid']:
         vehiculoid = int(request.form['vehiculoid'])
@@ -81,6 +84,7 @@ def get_vehiculo_id():
     return jsonify({'htmlresponse': render_template('/sitio/vehiculo_response.html', context=contexto)})
 
 @vehicles.route('/ajax_delete_vehiculo_id', methods=['GET','POST'])
+@login_required
 def delete_vehiculo_id():
     if request.form['vehiculoid']:
         vehiculoid = int(request.form['vehiculoid'])

@@ -17,13 +17,16 @@ def get_mov_vehiculo():
     mov_vehiculo = MovimientoVehiculo.query.join(Vehiculo).with_entities(MovimientoVehiculo.id, 
                                             MovimientoVehiculo.estado, Vehiculo.placa, MovimientoVehiculo.minutos,
                                             MovimientoVehiculo.fecha_ingreso.label("ingreso"),
-                                            MovimientoVehiculo.fecha_salida.label("salida")).order_by(MovimientoVehiculo.id.desc())
+                                            MovimientoVehiculo.fecha_salida.label("salida")
+                                            ).filter(MovimientoVehiculo.parqueadero_id == session['user']['parqueadero']
+                                            ).order_by(MovimientoVehiculo.estado.asc(),MovimientoVehiculo.id.desc())
 
     contexto = {"lista_mov": mov_vehiculo}
 
     return render_template('/sitio/movimiento_vehiculos/ver_movimiento.html', context=contexto)
 
 @mov_vehicles.route('/ajax_register_mov', methods=['GET','POST'])
+@login_required
 def ajax_register_mov():
     if request.form['optionid']:
         optionid = int(request.form['optionid'])
@@ -37,7 +40,7 @@ def ajax_register_mov():
     elif optionid == 2:
         tipo_mov = 'Salida'
 
-    parking_id = session['parking']
+    parking_id = session['user']['parqueadero']
     parkings = Parqueadero.query.with_entities(Parqueadero.id, Parqueadero.nombre).filter(Parqueadero.id == parking_id).first()
     vehicles = Vehiculo.query.join(Tipovehiculo).with_entities(Vehiculo.id, Vehiculo.placa, Tipovehiculo.nombre.label("tipo")).all()
 
@@ -50,6 +53,7 @@ def ajax_register_mov():
     return jsonify({'htmlresponse': render_template('/sitio/movimiento_vehiculos/registrar_mov.html', context=contexto)})
 
 @mov_vehicles.route("/mov_vehiculo/registrar", methods=['POST'])
+@login_required
 def register_mov():
     if request.method == 'POST':
         fecha_in = request.form.get('in_date')
@@ -59,7 +63,8 @@ def register_mov():
         vehiculo_id = int(request.form.get('vehicle'))
         parqueadero_id = int(request.form.get('parking'))
 
-        vehicle_mov = MovimientoVehiculo.query.filter(MovimientoVehiculo.vehiculo_id==vehiculo_id, MovimientoVehiculo.parqueadero_id==parqueadero_id).order_by(MovimientoVehiculo.id.desc()).first()
+        vehicle_mov = MovimientoVehiculo.query.filter(MovimientoVehiculo.vehiculo_id==vehiculo_id,  MovimientoVehiculo.parqueadero_id==parqueadero_id
+                                                    ).order_by(MovimientoVehiculo.estado.asc(), MovimientoVehiculo.id.desc()).first()
         utc=pytz.timezone('America/Lima')
         
         if hora_in:
@@ -69,7 +74,7 @@ def register_mov():
                     mov_vehiculo = MovimientoVehiculo.query.join(Vehiculo).with_entities(MovimientoVehiculo.id, 
                                                             MovimientoVehiculo.estado, Vehiculo.placa,
                                                             MovimientoVehiculo.fecha_ingreso.label("ingreso"),
-                                                            MovimientoVehiculo.fecha_salida.label("salida"))
+                                                            MovimientoVehiculo.fecha_salida.label("salida")).filter(MovimientoVehiculo.parqueadero_id == parqueadero_id)
 
                     contexto = {"lista_mov": mov_vehiculo}
 
@@ -84,7 +89,7 @@ def register_mov():
                     mov_vehiculo = MovimientoVehiculo.query.join(Vehiculo).with_entities(MovimientoVehiculo.id, 
                                                             MovimientoVehiculo.estado, Vehiculo.placa,
                                                             MovimientoVehiculo.fecha_ingreso.label("ingreso"),
-                                                            MovimientoVehiculo.fecha_salida.label("salida"))
+                                                            MovimientoVehiculo.fecha_salida.label("salida")).filter(MovimientoVehiculo.parqueadero_id == parqueadero_id)
 
                     contexto = {"lista_mov": mov_vehiculo}
 
@@ -97,7 +102,7 @@ def register_mov():
                 mov_vehiculo = MovimientoVehiculo.query.join(Vehiculo).with_entities(MovimientoVehiculo.id, 
                                                         MovimientoVehiculo.estado, Vehiculo.placa,
                                                         MovimientoVehiculo.fecha_ingreso.label("ingreso"),
-                                                        MovimientoVehiculo.fecha_salida.label("salida"))
+                                                        MovimientoVehiculo.fecha_salida.label("salida")).filter(MovimientoVehiculo.parqueadero_id == parqueadero_id)
 
                 contexto = {"lista_mov": mov_vehiculo}
 

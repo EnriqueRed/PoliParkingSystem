@@ -52,6 +52,26 @@
                                     <label for="confirmpassword" class="form-label">Confirmar contraseña</label>
                                     <input type="password" name="confirmpassword" class="form-control" id="confirmpassword" required>
                                     <div class="invalid-feedback">La contraseñas no coinciden. Por favor verifica!</div>
+                                </div> 
+
+                                <div class="col-12">
+                                    <label for="rol" class="form-label">Rol de usuario</label>
+                                    <select id="rol_select" class="form-select" aria-label="Default select example" name="rol" onchange="change_rol(this);" required>
+                                        <option value="" selected>Seleccionar opción</option>
+                                        {% for row in context["lista_roles"] %}
+                                        <option value={{row.id}}>{{row.nombre}}</option>
+                                        {% endfor %}
+                                    </select>
+                                </div>
+
+                                <div class="col-12" id="parking_div" style="visibility: hidden;">
+                                    <label for="parking" class="form-label">Parqueadero</label>
+                                    <select id="parking_select" class="form-select" aria-label="Default select example" name="parking">
+                                        <option value="" selected>Seleccionar opción</option>
+                                        {% for row in context["lista_parking"] %}
+                                        <option value={{row.id}}>{{row.nombre}}</option>
+                                        {% endfor %}
+                                    </select>
                                 </div>
 
                                 <div class="col-12">
@@ -75,4 +95,18 @@
         </div>
     </section>
 
+    <script type="text/javascript">
+        function change_rol(sel)
+        {
+            if (sel.value != 1){
+                document.getElementById("parking_div").style.visibility = "visible";
+            } 
+            else
+            {
+                document.getElementById("parking_div").style.visibility = "hidden";
+            }
+        }
+    </script>
+
 {% endblock %}
+

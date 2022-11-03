@@ -2,7 +2,7 @@ from cmath import e
 from datetime import datetime, timedelta
 from dateutil.relativedelta import relativedelta
 from tkinter import E
-from flask import Blueprint, current_app, render_template, jsonify, request, redirect, url_for
+from flask import Blueprint, current_app, render_template, jsonify, request, redirect, session, url_for
 from flask_login import login_required
 from sqlalchemy.sql import text
 from website.models import Vehiculo, Tipovehiculo, User, MovimientoVehiculo
@@ -59,6 +59,7 @@ def get_dates_option(optionid):
 
 
 @dashboard.route('/ajax_get_vehiculo_in', methods=['GET','POST'])
+@login_required
 def get_vehiculo_in(return_context=0,optionid=0):
     if not optionid:
         if request.form['optionid']:
@@ -68,8 +69,12 @@ def get_vehiculo_in(return_context=0,optionid=0):
 
     date_ini,date_fin,date_ini_ant,date_fin_ant,filtro,interval = get_dates_option(optionid=optionid)
 
-    mov_vehiculo = MovimientoVehiculo.query.filter(MovimientoVehiculo.fecha_ingreso >= date_ini).filter(MovimientoVehiculo.fecha_ingreso <= date_fin)    
-    mov_vehiculo_ant = MovimientoVehiculo.query.filter(MovimientoVehiculo.fecha_ingreso >= date_ini_ant).filter(MovimientoVehiculo.fecha_ingreso <= date_fin_ant)
+    mov_vehiculo = MovimientoVehiculo.query.filter(MovimientoVehiculo.parqueadero_id == session['user']['parqueadero'],
+                                                MovimientoVehiculo.fecha_ingreso >= date_ini, 
+                                                MovimientoVehiculo.fecha_ingreso <= date_fin)    
+    mov_vehiculo_ant = MovimientoVehiculo.query.filter(MovimientoVehiculo.parqueadero_id == session['user']['parqueadero'],
+                                                MovimientoVehiculo.fecha_ingreso >= date_ini_ant,
+                                                MovimientoVehiculo.fecha_ingreso <= date_fin_ant)
 
     cantidad_act = mov_vehiculo.count()
     cantidad_ant = mov_vehiculo_ant.count()
@@ -95,6 +100,7 @@ def get_vehiculo_in(return_context=0,optionid=0):
 
 
 @dashboard.route('/ajax_get_vehiculo_out', methods=['GET','POST'])
+@login_required
 def get_vehiculo_out(return_context=0,optionid=0):
     if not optionid:
         if request.form['optionid']:
@@ -104,8 +110,14 @@ def get_vehiculo_out(return_context=0,optionid=0):
 
     date_ini,date_fin,date_ini_ant,date_fin_ant,filtro,interval = get_dates_option(optionid=optionid)
 
-    mov_vehiculo = MovimientoVehiculo.query.filter(MovimientoVehiculo.fecha_ingreso >= date_ini).filter(MovimientoVehiculo.fecha_ingreso <= date_fin).filter(MovimientoVehiculo.estado=='salida')
-    mov_vehiculo_ant = MovimientoVehiculo.query.filter(MovimientoVehiculo.fecha_ingreso >= date_ini_ant).filter(MovimientoVehiculo.fecha_ingreso <= date_fin_ant).filter(MovimientoVehiculo.estado=='salida')
+    mov_vehiculo = MovimientoVehiculo.query.filter(MovimientoVehiculo.parqueadero_id == session['user']['parqueadero'],
+                                                    MovimientoVehiculo.fecha_salida >= date_ini,
+                                                    MovimientoVehiculo.fecha_salida <= date_fin,
+                                                    MovimientoVehiculo.estado=='salida')
+    mov_vehiculo_ant = MovimientoVehiculo.query.filter(MovimientoVehiculo.parqueadero_id == session['user']['parqueadero'],
+                                                    MovimientoVehiculo.fecha_salida >= date_ini_ant,
+                                                    MovimientoVehiculo.fecha_salida <= date_fin_ant,
+                                                    MovimientoVehiculo.estado=='salida')
 
     cantidad_act = mov_vehiculo.count()
     cantidad_ant = mov_vehiculo_ant.count()
@@ -131,6 +143,7 @@ def get_vehiculo_out(return_context=0,optionid=0):
 
 
 @dashboard.route('/ajax_get_users_indic', methods=['GET','POST'])
+@login_required
 def get_users_indic(return_context=0,optionid=0):
     if not optionid:
         if request.form['optionid']:
@@ -166,6 +179,7 @@ def get_users_indic(return_context=0,optionid=0):
     return jsonify({'htmlresponse': render_template('/sitio/dashboard/indicador_usuarios.html', context=contexto)})
 
 @dashboard.route('/ajax_get_recent_mov', methods=['GET','POST'])
+@login_required
 def get_recent_mov(return_context=0):
     sql = '''
         select A.id, C.nombre, B.placa,
@@ -175,9 +189,11 @@ def get_recent_mov(return_context=0):
         from movimiento_vehiculo A
         inner join vehiculo B on A.vehiculo_id = B.id 
         inner join "user" C on B.user_id = C.id
+        where A.parqueadero_id = %s
         order by estado asc, id desc
         limit 5
-    '''
+    ''' % (session['user']['parqueadero'])
+
     engine = current_app.config.get('engine')
     with engine.connect().execution_options(autocommit=True) as conn:
         query = conn.execute(text(sql))         
@@ -192,24 +208,31 @@ def get_recent_mov(return_context=0):
 
 
 @dashboard.route('/ajax_get_trafico_vehiculo', methods=['GET','POST'])
+@login_required
 def get_trafico_vehiculo():
+    park_id = session['user']['parqueadero']
+
     sql = '''
             select count(A.id) as cant, '06:00 - 10:00' as rango
             from movimiento_vehiculo A
-            where to_timestamp(substring(cast(A.fecha_ingreso as varchar(50)), 12,5), 'HH24:MI')::time between '06:00' and '10:00'
+            where A.parqueadero_id = %s
+                    and to_timestamp(substring(cast(A.fecha_ingreso as varchar(50)), 12,5), 'HH24:MI')::time between '06:00' and '10:00'
             union all
             select count(A.id) as cant, '10:00 - 14:00' as rango
             from movimiento_vehiculo A
-            where to_timestamp(substring(cast(A.fecha_ingreso as varchar(50)), 12,5), 'HH24:MI')::time between '10:00' and '14:00'
+            where A.parqueadero_id = %s
+                    and to_timestamp(substring(cast(A.fecha_ingreso as varchar(50)), 12,5), 'HH24:MI')::time between '10:00' and '14:00'
             union all
             select count(A.id) as cant, '14:00 - 18:00' as rango
             from movimiento_vehiculo A
-            where to_timestamp(substring(cast(A.fecha_ingreso as varchar(50)), 12,5), 'HH24:MI')::time between '14:00' and '18:00'
+            where A.parqueadero_id = %s
+                    and to_timestamp(substring(cast(A.fecha_ingreso as varchar(50)), 12,5), 'HH24:MI')::time between '14:00' and '18:00'
             union all
             select count(A.id) as cant, '18:00 - 22:00' as rango
             from movimiento_vehiculo A
-            where to_timestamp(substring(cast(A.fecha_ingreso as varchar(50)), 12,5), 'HH24:MI')::time between '18:00' and '22:00'
-    ''' 
+            where A.parqueadero_id = %s
+                    and to_timestamp(substring(cast(A.fecha_ingreso as varchar(50)), 12,5), 'HH24:MI')::time between '18:00' and '22:00'
+    ''' % (park_id, park_id, park_id, park_id) 
 
     engine = current_app.config.get('engine')
     with engine.connect().execution_options(autocommit=True) as conn:
@@ -228,6 +251,7 @@ def get_trafico_vehiculo():
     # return jsonify({'htmlresponse': render_template('/sitio/dashboard/trafico_vehiculos.html', context=contexto)})
 
 @dashboard.route('/ajax_get_dias_concurridos', methods=['GET','POST'])
+@login_required
 def get_dias_concurridos():
     sql = '''
         select * 
@@ -235,11 +259,13 @@ def get_dias_concurridos():
         (
             select fecha_ingreso::TIMESTAMP::DATE as fecha, count(A.id) as cantidad, sum(minutos) / 60 as horas
             from movimiento_vehiculo A
+            where A.parqueadero_id = %s
             group by fecha_ingreso::TIMESTAMP::DATE 
         ) A
         order by horas desc
         limit 3
-    '''
+    ''' % (session['user']['parqueadero'])
+    
     engine = current_app.config.get('engine')
     with engine.connect().execution_options(autocommit=True) as conn:
         query = conn.execute(text(sql))         

@@ -25,6 +25,7 @@
         <!-- Datatables -->
         <link rel="stylesheet" type="text/css" href="https://cdn.datatables.net/1.12.1/css/jquery.dataTables.min.css" />
         <link rel="stylesheet" type="text/css" href="https://cdn.datatables.net/responsive/2.3.0/css/responsive.dataTables.min.css" />
+        <link rel="shortcut icon" href="{{ url_for('static', filename= '/img/polilogo.png') }}"/>
     </head>
 
     <body>
@@ -96,13 +97,13 @@
 
                 <a class="nav-link nav-profile d-flex align-items-center pe-0" href="#" data-bs-toggle="dropdown">
                     <img src="{{ url_for('static', filename= '/img/profile_image.jpg') }}" alt="Profile" class="rounded-circle">
-                    <span class="d-none d-md-block dropdown-toggle ps-2">...</span>
+                    <span class="d-none d-md-block dropdown-toggle ps-2">{{ session.user['nombre'] }}</span>
                 </a><!-- End Profile Iamge Icon -->
 
                 <ul class="dropdown-menu dropdown-menu-end dropdown-menu-arrow profile">
                     <li class="dropdown-header">
-                    <h6>Enrique Redondo</h6>
-                    <span>Desarrollador</span>
+                    <h6>{{ session.user['nombre'] }}</h6>
+                    <span>{{ session.user['usuario'] }}</span>
                     </li>
                     <li>
                     <hr class="dropdown-divider">
