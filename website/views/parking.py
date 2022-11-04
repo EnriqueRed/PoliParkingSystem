@@ -1,8 +1,9 @@
 from cmath import e
 from tkinter import E
-from flask import Blueprint, render_template, jsonify, request, redirect, url_for
+from flask import Blueprint, current_app, render_template, jsonify, request, redirect, session, url_for
 from flask_login import login_required
 from website.models import Parqueadero, User
+from sqlalchemy.sql import text
 from .. import db
 
 parkings = Blueprint('parkings', __name__)
@@ -94,4 +95,40 @@ def delete_parqueadero_id():
     return jsonify('true')
 
 
+@parkings.route('/parqueadero/disponibilidad', methods=['GET'])
+@login_required
+def get_parqueadero_disponibilidad():
+    sql = '''
+        select *, round(100 - (A.carro * 100 / A.capacidad_carros),0) as percent_carro, 
+                round(100 - (A.moto * 100 / A.capacidad_motos),0) as percent_moto
+        from 
+        (
+            select A.id, A.nombre,	sum(case vehiculo when 'Carro' then cant else 0 end) as Carro,
+                    A.capacidad_carros, sum(case vehiculo when 'Moto' then cant else 0 end) as Moto,
+                    A.capacidad_motos, A.direccion
+            from
+            (
+                select A.id, A.nombre, A.capacidad_carros, A.capacidad_motos, A.direccion, B.cant, B.nombre as vehiculo
+                from parqueadero A
+                left join
+                (
+                    select count(A.id) as cant, A.parqueadero_id, C.nombre
+                    from movimiento_vehiculo A
+                    inner join vehiculo B on A.vehiculo_id = B.id
+                    inner join tipovehiculo C on B.tipo_vehiculo_id = C.id 
+                    where estado = 'ingreso'
+                    group by A.parqueadero_id, C.nombre	
+                ) B on A.id = B.parqueadero_id    
+            ) A 
+            group by A.id, A.nombre, A.capacidad_carros, A.capacidad_motos, A.direccion
+        ) A
+    ''' 
+    
+    engine = current_app.config.get('engine')
+    with engine.connect().execution_options(autocommit=True) as conn:
+        query = conn.execute(text(sql))         
+    disponibilidad = query.fetchall()
 
+    contexto = {"disponibilidad": disponibilidad}  
+
+    return render_template('/sitio/parqueadero_disponibilidad.html', context=contexto)

@@ -1,0 +1,37 @@
+{% include 'sitio/header.html' %}
+
+<main id="main" class="main">
+    <div class="pagetitle">
+        <h1>Disponibilidad de Parqueaderos</h1>
+        <nav>
+          <ol class="breadcrumb">
+            <li class="breadcrumb-item"><a href="/inicio">Home</a></li>
+            <li class="breadcrumb-item active">Disponibilidad de parqueaderos</li>
+          </ol>
+        </nav>
+    </div>
+    <div class="card">
+        <br>
+        <div class="section">
+            <div class="row align-items-top">
+                <br><br>
+                {% for row in context["disponibilidad"] %}
+                <div class="col-lg-4">
+                    <div class="card">
+                        <img src="{{ url_for('static', filename= '/img/parking.jpg') }}" class="card-img-top" alt="...">
+                        <div class="card-img-overlay">
+                            <h5 class="card-title">{{row[1]}}</h5>
+                            <h6 class="card-text">Cantidad de carros: <strong>{{row[2]}}/{{row[3]}} <br> Porcentaje: {{row[7]}}%</strong></p>
+                            <h6 class="card-text">Cantidad de motos: <strong>{{row[4]}}/{{row[5]}} <br> Porcentaje: {{row[8]}}%</strong></p>
+                            <h6 class="card-text">Dirección: <strong>{{row[6]}}</strong></p>
+                        </div>
+                    </div>
+                </div>
+                {% endfor %}
+                
+            </div>
+        </div>
+    </div>
+</main>
+
+{% include 'sitio/footer.html' %}
