@@ -49,6 +49,7 @@ def editar_parqueadero():
         c_carros = request.form.get('c_carros')
         c_motos = request.form.get('c_motos')
         direccion = request.form.get('direccion')
+        url_map = request.form.get('url_map')
 
         try:
             tmp_parking = Parqueadero.query.filter(Parqueadero.id == id_p).first()
@@ -56,6 +57,7 @@ def editar_parqueadero():
             tmp_parking.capacidad_carros= c_carros
             tmp_parking.capacidad_motos= c_motos
             tmp_parking.direccion= direccion
+            tmp_parking.url_mapa= url_map
 
             db.session.commit()
         except BaseException as error:
@@ -72,7 +74,7 @@ def get_parqueadero_id():
         parqueaderoid = 0
 
     parqueadero = Parqueadero.query.with_entities(Parqueadero.id, Parqueadero.nombre, Parqueadero.capacidad_carros, 
-                                                Parqueadero.capacidad_motos, Parqueadero.direccion).filter(Parqueadero.id == parqueaderoid).first()
+                                                Parqueadero.capacidad_motos, Parqueadero.direccion, Parqueadero.url_mapa).filter(Parqueadero.id == parqueaderoid).first()
 
     contexto = {"parking": parqueadero}    
 
@@ -105,10 +107,10 @@ def get_parqueadero_disponibilidad():
         (
             select A.id, A.nombre,	sum(case vehiculo when 'Carro' then cant else 0 end) as Carro,
                     A.capacidad_carros, sum(case vehiculo when 'Moto' then cant else 0 end) as Moto,
-                    A.capacidad_motos, A.direccion
+                    A.capacidad_motos, A.direccion, A.url_mapa
             from
             (
-                select A.id, A.nombre, A.capacidad_carros, A.capacidad_motos, A.direccion, B.cant, B.nombre as vehiculo
+                select A.id, A.nombre, A.capacidad_carros, A.capacidad_motos, A.direccion, B.cant, B.nombre as vehiculo, A.url_mapa
                 from parqueadero A
                 left join
                 (
@@ -120,7 +122,7 @@ def get_parqueadero_disponibilidad():
                     group by A.parqueadero_id, C.nombre	
                 ) B on A.id = B.parqueadero_id    
             ) A 
-            group by A.id, A.nombre, A.capacidad_carros, A.capacidad_motos, A.direccion
+            group by A.id, A.nombre, A.capacidad_carros, A.capacidad_motos, A.direccion, A.url_mapa
         ) A
     ''' 
     

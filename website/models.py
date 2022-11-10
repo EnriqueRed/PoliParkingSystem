@@ -54,4 +54,5 @@ class Parqueadero(db.Model):
     direccion = db.Column(db.String(200))
     capacidad_carros = db.Column(db.Integer)
     capacidad_motos = db.Column(db.Integer)
+    url_mapa = db.Column(db.Text)
     

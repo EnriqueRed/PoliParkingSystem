@@ -8,6 +8,8 @@ Create Date: 2022-10-04 22:26:10.707255
 from alembic import op
 import sqlalchemy as sa
 from sqlalchemy.dialects import postgresql
+from sqlalchemy.sql import table, column
+from sqlalchemy import String, Integer, Date
 
 # revision identifiers, used by Alembic.
 revision = '960d4193a85e'
@@ -60,6 +62,27 @@ def upgrade():
     op.drop_column('user', 'username')
     op.drop_column('user', 'name')
     # ### end Alembic commands ###
+
+    tipovehiculo_table = table('tipovehiculo',
+        column('id', Integer),
+        column('nombre', String)
+    )
+    op.bulk_insert(tipovehiculo_table,
+    [
+        {'id':1, 'nombre':'Moto'},
+        {'id':2, 'nombre':'Carro'}
+    ])
+
+    rol_table = table('rol',
+        column('id', Integer),
+        column('nombre', String)
+    )
+    op.bulk_insert(rol_table,
+    [
+        {'id':1, 'nombre':'Usuario'},
+        {'id':2, 'nombre':'Administrador Parqueadero'},
+        {'id':3, 'nombre':'Administrador Sitio Web'},
+    ])
 
 
 def downgrade():

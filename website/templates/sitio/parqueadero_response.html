@@ -38,6 +38,13 @@
                                 <input type="text" class="form-control" name="direccion" value="{{context['parking'].direccion}}" required> 
                             </div>
                         </div>
+
+                        <div class="row mb-3">
+                            <label for="url_map" class="col-sm-2 offset-sm-1 col-form-label">Url de google maps</label>
+                            <div class="col-sm-6">
+                                <input type="text" class="form-control" name="url_map" value="{{context['parking'].url_mapa}}"> 
+                            </div>
+                        </div>
                         <br>
                         <div class="text-center">
                             <button type="submit" class="btn btn-primary">Guardar</button>
