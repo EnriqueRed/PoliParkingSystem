@@ -1,26 +1,27 @@
 <!doctype html>
 <html lang="en">
     <head>
+        <script src="{{ url_for('static', filename= '/js/apexcharts/apexcharts.min.js') }}"></script>
         <title>{% block title %}Sistema Gestión Parqueaderos Politécnico Grancolombiano{% endblock %}</title>
         <!-- Required meta tags -->
         <meta charset="utf-8">
         <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
 
         <!-- PoliParking CSS -->
-        <link href="static/poliparking/bootstrap/css/bootstrap.min.css" rel="stylesheet">
-        <link href="static/poliparking/bootstrap-icons/bootstrap-icons.css" rel="stylesheet">
-        <link href="static/poliparking/boxicons/css/boxicons.min.css" rel="stylesheet">
-        <link href="static/poliparking/quill/quill.snow.css" rel="stylesheet">
-        <link href="static/poliparking/quill/quill.bubble.css" rel="stylesheet">
-        <link href="static/poliparking/remixicon/remixicon.css" rel="stylesheet">
-        <link href="static/poliparking/simple-datatables/style.css" rel="stylesheet">
+        <link href="{{ url_for('static', filename= 'poliparking/bootstrap/css/bootstrap.min.css') }}" rel="stylesheet">
+        <link href="{{ url_for('static', filename= 'poliparking/bootstrap-icons/bootstrap-icons.css') }}" rel="stylesheet">
+        <link href="{{ url_for('static', filename= 'poliparking/boxicons/css/boxicons.min.css') }}" rel="stylesheet">
+        <link href="{{ url_for('static', filename= 'poliparking/quill/quill.snow.css') }}" rel="stylesheet">
+        <link href="{{ url_for('static', filename= 'poliparking/quill/quill.bubble.css') }}" rel="stylesheet">
+        <link href="{{ url_for('static', filename= 'poliparking/remixicon/remixicon.css') }}" rel="stylesheet">
+        <link href="{{ url_for('static', filename= 'poliparking/simple-datatables/style.css') }}" rel="stylesheet">
         
         <!-- Google Fonts -->
         <link href="https://fonts.gstatic.com" rel="preconnect">
         <link href="https://fonts.googleapis.com/css?family=Open+Sans:300,300i,400,400i,600,600i,700,700i|Nunito:300,300i,400,400i,600,600i,700,700i|Poppins:300,300i,400,400i,500,500i,600,600i,700,700i" rel="stylesheet">
         
         <!-- Plantilla principal -->
-        <link href="static/css/style.css" rel="stylesheet">
+        <link href="{{ url_for('static', filename= '/css/style.css') }}" rel="stylesheet">
 
         <!-- Datatables -->
         <link rel="stylesheet" type="text/css" href="https://cdn.datatables.net/1.12.1/css/jquery.dataTables.min.css" />

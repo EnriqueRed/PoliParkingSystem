@@ -122,7 +122,7 @@ def confirm_email(token):
         if not email:
             return render_template('/sitio/Error404.html'), 404
     except:
-        flash('El link de confirmaciòn no es válido o ha expirado. Por favor verifique!', 'danger')
+        flash('El link de confirmaciòn no es válido o ha expirado. Por favor verifique!', 'error')
 
     user = User.query.filter_by(email=email).first_or_404()
     if user.confirmed:
@@ -134,3 +134,81 @@ def confirm_email(token):
         flash('Se ha confirmado la cuenta. Ya puedes iniciar sesión!', 'success')
 
     return redirect(url_for('auth.login'))
+
+@auth.route('/change_password_email', methods=['GET', 'POST'])
+def change_password_email():
+    if request.method == 'POST':
+        email = request.form.get('email')
+
+        user = User.query.filter_by(email=email).first()
+
+        if not user:
+            flash('El correo digitado no es válido. Por favor verifique!', 'error')
+            return redirect(url_for('auth.change_password_email'))
+        
+        if not user.confirmed:
+            flash('El correo digitado no ha sido confirmado. Por favor verifique!', 'error')
+            return redirect(url_for('auth.change_password_email'))
+
+        try:
+            token = generate_confirmation_token(user.email)
+            confirm_url = url_for('auth.change_password', token=token, _external=True)
+            html = render_template('sitio/user/cambiar_password.html', confirm_url=confirm_url)
+            subject = "PoliParkingSystem. Actualización de contraseña."
+            send_email(user.email, subject, html)
+        except:
+            flash('No fue posible enviar el correo para el cambio de contraseña. Por favor verifique!', 'error')
+            return redirect(url_for('auth.change_password_email'))
+
+        flash('Un mensaje fue enviado a su correo con el link para el cambio de contraseña', 'success')
+        return redirect(url_for('auth.change_password_email'))
+    else:
+        return render_template('/admin/change_password_email.html')
+
+
+@auth.route('/change_password/<token>', methods=['GET'])
+def change_password(token):
+    if request.method == 'GET':
+        contexto = {"token": token}
+        try:
+            email = confirm_token(token)
+
+            if not email:
+                return render_template('/sitio/Error404.html'), 404
+        except:
+            flash('El link de cambio de contraseña no es válido o ha expirado. Por favor verifique!', 'error')        
+            return redirect(url_for('auth.login'))
+
+        return render_template('/admin/change_password.html', context=contexto)
+
+
+@auth.route('/change_password_post', methods=['POST'])
+def change_password_post():
+    if request.method == 'POST':
+        token = request.form.get('token')
+        password = request.form.get('password')
+        confirmpassword = request.form.get('confirmpassword')
+
+        try:
+            email = confirm_token(token)
+
+            if not email:
+                return render_template('/sitio/Error404.html'), 404
+        except:
+            flash('El link de cambio de contraseña no es válido o ha expirado. Por favor verifique!', 'error')
+            return redirect(url_for('auth.login'))
+
+        user = User.query.filter_by(email=email).first_or_404()
+
+        if password != confirmpassword:
+            flash('Las contraseñas no coinciden. Por favor verifique!', category='error')
+            return render_template('/admin/change_password.html')
+
+        try:
+            user.password = generate_password_hash(password, method='sha256')
+            db.session.commit()
+        except BaseException as error:
+            db.session.rollback()
+
+        flash('La contraseña fue actualizada correctamente.', 'success')
+        return redirect(url_for('auth.login'))
