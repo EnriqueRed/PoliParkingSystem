@@ -34,12 +34,12 @@
                                 </div>
 
                                 <div class="col-12">
-                                <label for="username" class="form-label">Usuario</label>
-                                <div class="input-group has-validation">
-                                    <span class="input-group-text" id="inputGroupPrepend">@</span>
-                                    <input type="text" name="username" class="form-control" id="username" required readonly>
-                                    <div class="invalid-feedback">Por favor digita un usuario válido</div>
-                                </div>
+                                    <label for="username" class="form-label">Usuario</label>
+                                    <div class="input-group has-validation">
+                                        <span class="input-group-text" id="inputGroupPrepend">@</span>
+                                        <input type="text" name="username" class="form-control" id="username" required readonly>
+                                        <div class="invalid-feedback">Por favor digita un usuario válido</div>
+                                    </div>
                                 </div>
 
                                 <div class="col-12">
@@ -62,6 +62,15 @@
                                         <option value={{row.id}}>{{row.nombre}}</option>
                                         {% endfor %}
                                     </select>
+                                </div>
+
+                                <div class="col-12" id="propietario_div" style="visibility: hidden;">
+                                    <div class="form-check">
+                                        <input class="form-check-input" type="checkbox" name="propietario" id="propietario">
+                                        <label class="form-check-label" for="propietario">
+                                        Es propietario
+                                        </label>
+                                    </div>
                                 </div>
 
                                 <div class="col-12" id="parking_div" style="visibility: hidden;">
@@ -100,10 +109,14 @@
         {
             if (sel.value != 1){
                 document.getElementById("parking_div").style.visibility = "visible";
+                document.getElementById("propietario_div").style.visibility = "visible";
+                document.getElementById("propietario").checked = true;
             } 
             else
             {
                 document.getElementById("parking_div").style.visibility = "hidden";
+                document.getElementById("propietario_div").style.visibility = "hidden";
+                document.getElementById("propietario").checked = false;
             }
         }
     </script>

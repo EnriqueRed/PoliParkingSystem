@@ -1,6 +1,14 @@
 function get_username() {
     var email = document.getElementById("email").value
-    document.getElementById("username").value = email.substring(0, email.search("@poligran.edu.co"));
+    if (email.includes("@poligran.edu.co"))
+    {
+        document.getElementById("username").value = email.substring(0, email.search("@poligran.edu.co"));
+    }
+    else
+    {
+        document.getElementById("username").value = email
+    }
+    
 }
 
 // function deleteSomething(id) {

@@ -11,7 +11,7 @@ main = Blueprint('main', __name__)
 def login():
     return redirect(url_for('dashboard.inicio'))
 
-# Index ---------------------------------------------------------------------------
+
 
 
 # Movimiento de vehiculos ----------------------------------------------------------

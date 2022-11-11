@@ -1,0 +1,58 @@
+<!doctype html>
+<html lang="en">
+    <head>
+        <title>404 - Not found / Sistema Gestión Parqueaderos Politécnico Grancolombiano</title>
+        <!-- Required meta tags -->
+        <meta charset="utf-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+
+        <!-- PoliParking CSS -->
+        <link href="{{ url_for('static', filename= '/poliparking/bootstrap/css/bootstrap.min.css') }}" rel="stylesheet">
+        <link href="{{ url_for('static', filename= '/poliparking/bootstrap-icons/bootstrap-icons.css') }}" rel="stylesheet">
+        <link href="{{ url_for('static', filename= '/poliparking/boxicons/css/boxicons.min.css') }}" rel="stylesheet">
+        <link href="{{ url_for('static', filename= '/poliparking/quill/quill.snow.css') }}" rel="stylesheet">
+        <link href="{{ url_for('static', filename= '/poliparking/quill/quill.bubble.css') }}" rel="stylesheet">
+        <link href="{{ url_for('static', filename= '/poliparking/remixicon/remixicon.css') }}" rel="stylesheet">
+        
+        <!-- Google Fonts -->
+        <link href="https://fonts.gstatic.com" rel="preconnect">
+        <link href="https://fonts.googleapis.com/css?family=Open+Sans:300,300i,400,400i,600,600i,700,700i|Nunito:300,300i,400,400i,600,600i,700,700i|Poppins:300,300i,400,400i,500,500i,600,600i,700,700i" rel="stylesheet">
+        
+        <!-- Plantilla principal -->
+        <link href="{{ url_for('static', filename= '/css/style.css') }}" rel="stylesheet">
+    </head>
+
+    <body>
+        <main>
+            <div class="container">
+                <section class="section error-404 min-vh-100 d-flex flex-column align-items-center justify-content-center">
+                <h1>404</h1>
+                <h2>La página que estas buscando no existe.</h2>
+                <img src="{{ url_for('static', filename= '/img/not-found.svg') }}" class="img-fluid py-5" alt="Page no encontrada">
+                </section>
+            </div>
+        </main>
+        <!-- Ajax -->
+        <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.12.4/jquery.min.js"></script>
+
+        <!-- poliparking JS -->
+        <script type="text/javascript" src="https://code.jquery.com/jquery-3.6.1.js"></script>
+        <script src="{{ url_for('static', filename= '/js/apexcharts/apexcharts.min.js') }}"></script>
+        <script src="{{ url_for('static', filename= '/poliparking/bootstrap/js/bootstrap.bundle.min.js') }}"></script>
+        <script src="{{ url_for('static', filename= '/poliparking/chart.js/chart.min.js') }}"></script>
+        <script src="{{ url_for('static', filename= '/poliparking/echarts/echarts.min.js') }}"></script>
+        <script src="{{ url_for('static', filename= '/poliparking/quill/quill.min.js') }}"></script>
+        <script src="{{ url_for('static', filename= '/poliparking/simple-datatables/simple-datatables.js') }}"></script>
+        <script src="{{ url_for('static', filename= '/poliparking/tinymce/tinymce.min.js') }}"></script>
+        <script src="{{ url_for('static', filename= '/poliparking/php-email-form/validate.js') }}"></script>
+        
+        <!-- Datatables -->
+        <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/pdfmake/0.1.36/pdfmake.min.js"></script>
+        <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/pdfmake/0.1.36/vfs_fonts.js"></script>
+        <script type="text/javascript" src="https://cdn.datatables.net/v/dt/jszip-2.5.0/dt-1.10.20/af-2.3.4/b-1.6.1/b-colvis-1.6.1/b-html5-1.6.1/cr-1.5.2/fc-3.3.0/kt-2.5.1/r-2.2.3/rg-1.1.1/rr-1.2.6/sl-1.3.1/datatables.min.js"></script>
+
+        <!-- Template Main JS File -->
+        <script src="{{ url_for('static', filename= '/js/main.js') }}"></script>
+        <script src="{{ url_for('static', filename= '/js/index.js') }}"></script>
+    </body>
+</html>

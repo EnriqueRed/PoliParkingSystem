@@ -15,6 +15,7 @@ werkzeug = "==2.2.2"
 pytz = "*"
 python-dateutil = "*"
 pandas = "*"
+flask-mail = "*"
 
 [dev-packages]
 

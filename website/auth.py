@@ -2,6 +2,8 @@ from flask import Blueprint, render_template, request, flash, redirect, url_for,
 from werkzeug.security import generate_password_hash, check_password_hash
 from flask_login import login_user, login_required, logout_user, current_user
 from .models import User, Rol, Parqueadero
+from .business.email_send import generate_confirmation_token, send_email, confirm_token
+
 from . import db
 
 auth = Blueprint('auth', __name__)
@@ -14,6 +16,9 @@ def login():
 
         user = User.query.filter_by(usuario=username).first()
         if user:
+            if not user.confirmed:
+                flash('Se debe confirmar la cuenta antes de ingresar. Por favor verifique!', category='error')
+                return render_template('/admin/login.html')
             if check_password_hash(user.password, password):
                 login_user(user, remember=True)
 
@@ -33,10 +38,19 @@ def login():
 
 @auth.route('/register', methods=['GET', 'POST'])
 def register():
+    list_parking = Parqueadero.query.with_entities(Parqueadero.id, Parqueadero.nombre).all()
+    lista_roles = Rol.query.with_entities(Rol.id, Rol.nombre).all()
+
+    contexto = {"lista_roles": lista_roles,
+                "lista_parking": list_parking}
+
     if request.method == 'POST':
         name = request.form.get('name')
         email = request.form.get('email')
-        username = email[:email.find("@poligran.edu.co")]
+        if "@poligran.edu.co" in email:
+            username = email[:email.find("@poligran.edu.co")]
+        else:
+            username = email
         password = request.form.get('password')
         confirmpassword = request.form.get('confirmpassword')
         propietario = bool(request.form.get('propietario'))
@@ -56,16 +70,17 @@ def register():
 
         if password != confirmpassword:
             flash('Las contraseñas no coinciden. Por favor verifique!', category='error')
-            return render_template('/admin/register.html')
+            return render_template('/admin/register.html', context=contexto)
 
         if not propietario:
             if '@poligran.edu.co' not in email:
                 flash('El correo debe ser un correo asociado al Politécnico Grancolombiano. Por favor verifique!', category='error')
+                return render_template('/admin/register.html', context=contexto)
         
         user = User.query.filter_by(email=email).first()
         if user:
             flash('Ya existe un usuario con el correo ingresado. Por favor verifique!', category='error')
-            return render_template('/admin/register.html')
+            return render_template('/admin/register.html', context=contexto)
         else:
             try:
                 new_user = User(nombre= name,
@@ -76,25 +91,19 @@ def register():
                                 parqueadero_id= parqueadero,
                                 rol_id= rol_id)
                 db.session.add(new_user)
+                
+                token = generate_confirmation_token(new_user.email)
+                confirm_url = url_for('auth.confirm_email', token=token, _external=True)
+                html = render_template('sitio/user/confirmar_email.html', confirm_url=confirm_url)
+                subject = "PoliParkingSystem. Confirmación de correo."
+                send_email(new_user.email, subject, html)
                 db.session.commit()
-            except:
+
+                flash('Un mensaje de confirmación de cuenta ha sido enviado a tu correo', 'success')
+                return redirect(url_for('auth.login'))
+            except BaseException as error:
                 db.session.rollback()
-
-            session['user'] = {'usuario': new_user.usuario,
-                                'nombre': new_user.nombre,
-                                'rol': new_user.rol_id,
-                                'propietario': new_user.es_propietario,
-                                'parqueadero': user.parqueadero_id}
-
-            login_user(new_user, remember=True)
-            return redirect(url_for('dashboard.inicio'))
     else:
-        list_parking = Parqueadero.query.with_entities(Parqueadero.id, Parqueadero.nombre).all()
-        lista_roles = Rol.query.with_entities(Rol.id, Rol.nombre).all()
-
-        contexto = {"lista_roles": lista_roles,
-                    "lista_parking": list_parking}
-
         return render_template('/admin/register.html', context=contexto)
 
 @auth.route('/logout')
@@ -102,4 +111,26 @@ def register():
 def logout():
     session.pop('user', None)
     logout_user()
+    return redirect(url_for('auth.login'))
+
+
+@auth.route('/confirmar/<token>')
+def confirm_email(token):
+    try:
+        email = confirm_token(token)
+
+        if not email:
+            return render_template('/sitio/Error404.html'), 404
+    except:
+        flash('El link de confirmaciòn no es válido o ha expirado. Por favor verifique!', 'danger')
+
+    user = User.query.filter_by(email=email).first_or_404()
+    if user.confirmed:
+        flash('La cuenta ha sido confirmada previamente. Si no puedes iniciar sesión contactate con el administrador del sitio.', 'success')
+    else:
+        user.confirmed = True
+        db.session.add(user)
+        db.session.commit()
+        flash('Se ha confirmado la cuenta. Ya puedes iniciar sesión!', 'success')
+
     return redirect(url_for('auth.login'))
