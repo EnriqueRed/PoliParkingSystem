@@ -16,6 +16,8 @@ pytz = "*"
 python-dateutil = "*"
 pandas = "*"
 flask-mail = "*"
+python-dotenv = "*"
+pdfkit = "*"
 
 [dev-packages]
 

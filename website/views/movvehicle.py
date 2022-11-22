@@ -1,11 +1,11 @@
 from cmath import e
 from tkinter import E
-from flask import Blueprint, render_template, jsonify, request, redirect, session, url_for, flash
+from flask import Blueprint, render_template, jsonify, request, redirect, session, url_for, flash, make_response
 from flask_login import login_required
 from website.models import MovimientoVehiculo, Parqueadero, Vehiculo, Tipovehiculo, User
 from .. import db
 from datetime import date, datetime
-import pytz
+import pytz, os, pdfkit, base64
 
 
 mov_vehicles = Blueprint('mov_vehicles', __name__)
@@ -52,10 +52,37 @@ def ajax_register_mov():
 
     return jsonify({'htmlresponse': render_template('/sitio/movimiento_vehiculos/registrar_mov.html', context=contexto)})
 
+
+@mov_vehicles.route('/ajax_view_invoice', methods=['GET','POST'])
+@login_required
+def ajax_view_invoice():
+    if request.form['invoiceid']:
+        invoiceid = int(request.form['invoiceid'])
+    else:
+        invoiceid = 0
+
+    contexto = {"placa": 'VMG80F'}  
+
+    # Generación de la factura en PDF
+    config = pdfkit.configuration(wkhtmltopdf=os.getenv("WKHTMLTOPDF_DIRECTORY"))
+    rendered = render_template('/sitio/invoice_report/invoice.html', context=contexto)
+    pdf = pdfkit.from_string(rendered, False, configuration=config)
+    response = make_response(pdf)
+    response.headers['Content-Type'] = 'application/pdf'
+    # response.headers['Content-Disposition'] = 'attachment; filename=Factura.pdf'
+    response.headers['Content-Disposition'] = 'inline; filename=Factura.pdf'
+
+    b64pdf = base64.b64encode(response.get_data())
+    base64pdf = 'data:application/pdf;base64,' + b64pdf.decode('utf-8')
+
+    return base64pdf
+
 @mov_vehicles.route("/mov_vehiculo/registrar", methods=['POST'])
 @login_required
 def register_mov():
     if request.method == 'POST':
+        
+
         fecha_in = request.form.get('in_date')
         hora_in = request.form.get('in_hour')
         fecha_out= request.form.get('out_date')
@@ -117,12 +144,25 @@ def register_mov():
                                             parqueadero_id= parqueadero_id)
 
                 db.session.add(new_mov)
+                db.session.commit()
             elif hora_out:
                 vehicle_mov.fecha_salida= fecha_salida
                 vehicle_mov.estado= 'salida'
                 vehicle_mov.minutos= minutos
+                
+                db.session.commit()
 
-            db.session.commit()
+                # # Generación de la factura en PDF
+                # config = pdfkit.configuration(wkhtmltopdf=os.getenv("WKHTMLTOPDF_DIRECTORY"))
+                # rendered = render_template('/sitio/invoice_report/invoice.html')
+                # pdf = pdfkit.from_string(rendered, False, configuration=config)
+                # response = make_response(pdf)
+                # response.headers['Content-Type'] = 'application/pdf'
+                # # response.headers['Content-Disposition'] = 'attachment; filename=Factura.pdf'
+                # response.headers['Content-Disposition'] = 'inline; filename=Factura.pdf'
+
+                # return response
+
         except BaseException as error:
             db.session.rollback()
 

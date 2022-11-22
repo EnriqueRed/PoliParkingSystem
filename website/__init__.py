@@ -4,12 +4,16 @@ from flask_sqlalchemy import SQLAlchemy
 from flask_migrate import Migrate
 from flask_login import LoginManager
 from flask_mail import Mail
+from dotenv import load_dotenv
+load_dotenv()
+import os
 
 db = SQLAlchemy()
 migrate = Migrate()
 mail = Mail()
 
 def create_app():
+    # print()
     app = Flask(__name__)
     app.config['SECRET_KEY'] = 'Xp2s5v8y/B?E(H+MbQeThWmYq3t6w9z$C&F)J@NcRfUjXn2r4u7x!A%D*G-KaPdS'
     app.config['SECURITY_PASSWORD_SALT'] = 'W4yyhZVAPYkF03NR9cuMBJ2jxGDsVT'
@@ -22,6 +26,8 @@ def create_app():
     app.config['MAIL_PASSWORD'] = 'arptglmqmwlqxxjn'
     app.config['MAIL_USE_TLS'] = True
     db.init_app(app)
+
+    # https://github.com/tschoonj/GTK-for-Windows-Runtime-Environment-Installer/releases
     
     migrate.init_app(app, db)
 
