@@ -46,12 +46,15 @@ class MovimientoVehiculo(db.Model):
     fecha_salida = db.Column(db.DateTime(timezone=False))
     estado = db.Column(db.String(20))
     minutos = db.Column(db.Integer)
+    placa = db.Column(db.String(20))
+    tipo_vehiculo_id = db.Column(db.Integer, db.ForeignKey('tipovehiculo.id'))
     vehiculo_id = db.Column(db.Integer, db.ForeignKey('vehiculo.id'))
     parqueadero_id = db.Column(db.Integer, db.ForeignKey('parqueadero.id'))
 
 # Parqueaderos --------------------------------------------------------------------------
 class Parqueadero(db.Model):
     id = db.Column(db.Integer, primary_key=True)
+    nit = db.Column(db.String(15))
     nombre = db.Column(db.String(150))
     direccion = db.Column(db.String(200))
     capacidad_carros = db.Column(db.Integer)
@@ -66,6 +69,7 @@ class TipoFuncionario(db.Model):
 # Factura --------------------------------------------------------------------------
 class Factura(db.Model):
     id = db.Column(db.Integer, primary_key=True)
+    minutos = db.Column(db.Integer)
     total_a_pagar = db.Column(db.Numeric(20,2))
     movimiento_id = db.Column(db.Integer, db.ForeignKey('movimiento_vehiculo.id'))
     parqueadero_id = db.Column(db.Integer, db.ForeignKey('parqueadero.id'))

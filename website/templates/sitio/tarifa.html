@@ -1,0 +1,197 @@
+{% include 'sitio/header.html' %}
+
+<main id="main" class="main">
+    <div class="card">
+        <div class="card-body">
+            <h5 class="card-title">Lista de Tarifas</h5> 
+
+            <button type="button" class="btn btn-outline-primary" data-bs-toggle="modal" data-bs-target="#tarifaModal">
+                Crear Tarifa
+            </button>
+            <br><br>
+            <div class="col-sm-10 offset-sm-1">
+                <table class="table table-hover" id="tbl_tarifa">
+                    <thead>
+                        <tr>
+                            <th>Nombre</th>
+                            <th>Tipo Vehículo</th>
+                            <th>Valor Minuto</th>
+                            <th>Valor Pleno</th>
+                            <th>Valor Mensual</th>
+                            <th>Tipo de Funcionario</th>
+                            <th></th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for row in context["lista_tarifa"] %}
+                        <tr>
+                            <td>{{row.nombre}}</td>
+                            <td>{{row.tipo_v}}</td>
+                            <td>{{row.valor_minuto}}</td>
+                            <td>{{row.valor_plena}}</td>
+                            <td>{{row.valor_mensualidad}}</td>
+                            <td>{{row.tipo_f}}</td>
+                            <td>
+                                <button data-id="{{row.id}}" type="button" class="edit btn btn-primary"><i class="ri-edit-box-line"></i></button>
+                                <button data-id="{{row.id}}" type="button" class="delete btn btn-danger"><i class="ri-delete-bin-6-line"></i></button>
+                            </td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>	
+        </div>
+    </div>
+</main>
+
+<div class="modal fade" id="tarifaModal" tabindex="-1" role="dialog">
+    <div class="modal-dialog modal-lg" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-tittle">Crear Tarifa</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Cerrar"></button>
+            </div>
+
+            <div class="modal-body">
+                <section class="section">
+                    <div class="row">
+                        <div class="col-lg-12">
+                            <div class="card">
+                                <div class="card-body">
+                                    <br>
+                                    <form action="/tarifa/crear" method="post" id="addtarifa">
+                                        <div class="row mb-3">
+                                            <label for="nombre" class="col-sm-2 offset-sm-1 col-form-label">Nombre</label>
+                                            <div class="col-sm-6">
+                                                <input type="text" class="form-control" name="nombre" required> 
+                                            </div>
+                                        </div>
+
+                                        <div class="row mb-3">
+                                            <label class="col-sm-2 offset-sm-1 col-form-label">Tipo Vehículo</label>
+                                            <div class="col-sm-6">
+                                                <select class="form-select" aria-label="Default select example" name="tipo_v" required>
+                                                    <option value="" selected>Seleccionar opción</option>
+                                                    {% for row in context["lista_tipov"] %}
+                                                    <option value={{row.id}}>{{row.nombre}}</option>
+                                                    {% endfor %}
+                                                </select>
+                                            </div>
+                                        </div>
+            
+                                        <div class="row mb-3">
+                                            <label for="valor_minuto" class="col-sm-2 offset-sm-1 col-form-label">Valor Minuto</label>
+                                            <div class="col-sm-6">
+                                                <div class="input-group mb-3">
+                                                    <span class="input-group-text" id="basic-addon1">$</span>
+                                                    <input type="number" class="form-control" name="valor_minuto" aria-describedby="basic-addon1" required> 
+                                                </div>
+                                            </div>
+                                        </div>
+
+                                        <div class="row mb-3">
+                                            <label for="valor_plena" class="col-sm-2 offset-sm-1 col-form-label">Valor Pleno</label>
+                                            <div class="col-sm-6">
+                                                <div class="input-group mb-3">
+                                                    <span class="input-group-text" id="basic-addon2">$</span>
+                                                    <input type="number" class="form-control" name="valor_plena" aria-describedby="basic-addon2" required> 
+                                                </div>
+                                            </div>
+                                        </div>
+
+                                        <div class="row mb-3">
+                                            <label for="valor_mensualidad" class="col-sm-2 offset-sm-1 col-form-label">Valor Mensual</label>
+                                            <div class="col-sm-6">
+                                                <div class="input-group mb-3">
+                                                    <span class="input-group-text" id="basic-addon3">$</span>
+                                                    <input type="number" class="form-control" name="valor_mensualidad" aria-describedby="basic-addon3" required> 
+                                                </div>
+                                            </div>
+                                        </div>
+
+                                        <div class="row mb-3">
+                                            <label class="col-sm-2 offset-sm-1 col-form-label">Tipo de Funcionario</label>
+                                            <div class="col-sm-6">
+                                                <select class="form-select" aria-label="Default select example" name="tipo_f" required>
+                                                    <option value="" selected>Seleccionar opción</option>
+                                                    {% for row in context["lista_tipof"] %}
+                                                    <option value={{row.id}}>{{row.nombre}}</option>
+                                                    {% endfor %}
+                                                </select>
+                                            </div>
+                                        </div>
+
+                                        <div class="text-center">
+                                            <button type="submit" class="btn btn-primary">Guardar</button>
+                                            <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancelar</button>
+                                        </div>
+                                    </form>
+            
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </section>
+            </div>
+        </div>
+    </div>
+</div>
+
+
+<div class="modal fade" id="tarifaEditModal" tabindex="-1" role="dialog">
+    <div class="modal-dialog modal-lg" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-tittle">Modificar Tarifa</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Cerrar"></button>
+            </div>
+
+            <div class="modal-body" id="modaleditbody">
+                
+            </div>
+        </div>
+    </div>
+</div>
+
+{% include 'sitio/footer.html' %}
+
+<script>
+    $(document).ready(function(){
+        var dataTable = $('#tbl_tarifa').DataTable( {            
+            dom: 'Bfrtip',
+            pageLength: 10,
+            buttons: {
+                name: 'primary',
+                buttons: ['excel','pdf']
+            },
+        });
+
+        $('.edit').click(function(){
+            var tarifaid = $(this).data('id');
+            $.ajax({
+                url: '/ajax_get_tarifa_id',
+                type: 'post',
+                data: {tarifaid: tarifaid},
+                success: function(data){
+                    $('#modaleditbody').html(data);
+                    $('#modaleditbody').append(data.htmlresponse);
+                    $('#tarifaEditModal').modal('show');
+                }
+            });
+        });
+
+        $('.delete').click(function(){
+            if (confirm('Esta seguro que desesea eliminar el registro?')) {
+                var tarifaid = $(this).data('id');
+                $.ajax({
+                    url: '/ajax_delete_tarifa_id',
+                    type: 'post',
+                    data: {tarifaid: tarifaid},
+                    success: function(data){
+                        location.reload();
+                    }
+                });
+            }
+        });
+    });
+</script>

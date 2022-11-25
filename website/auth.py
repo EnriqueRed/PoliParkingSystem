@@ -1,7 +1,7 @@
 from flask import Blueprint, render_template, request, flash, redirect, url_for, session
 from werkzeug.security import generate_password_hash, check_password_hash
 from flask_login import login_user, login_required, logout_user, current_user
-from .models import User, Rol, Parqueadero
+from .models import User, Rol, Parqueadero, TipoFuncionario
 from .business.email_send import generate_confirmation_token, send_email, confirm_token
 
 from . import db
@@ -26,7 +26,8 @@ def login():
                                     'nombre': user.nombre,
                                     'rol': user.rol_id,
                                     'propietario': user.es_propietario,
-                                    'parqueadero': user.parqueadero_id}
+                                    'parqueadero': user.parqueadero_id,
+                                    'tipo_funcionario_id': user.tipo_funcionario_id} 
 
                 return redirect(url_for('dashboard.inicio'))
             else:
@@ -38,10 +39,65 @@ def login():
 
 @auth.route('/register', methods=['GET', 'POST'])
 def register():
+    if request.method == 'POST':
+        name = request.form.get('name')
+        email = request.form.get('email')
+        if "@poligran.edu.co" in email:
+            username = email[:email.find("@poligran.edu.co")]
+        else:
+            username = email
+        password = request.form.get('password')
+        confirmpassword = request.form.get('confirmpassword')
+
+        rol_id = 1
+        parqueadero = None
+
+        if password != confirmpassword:
+            flash('Las contraseñas no coinciden. Por favor verifique!', category='error')
+            return render_template('/admin/register.html')
+
+        if '@poligran.edu.co' not in email:
+            flash('El correo debe ser un correo asociado al Politécnico Grancolombiano. Por favor verifique!', category='error')
+            return render_template('/admin/register.html')
+        
+        user = User.query.filter_by(email=email).first()
+        if user:
+            flash('Ya existe un usuario con el correo ingresado. Por favor verifique!', category='error')
+            return render_template('/admin/register.html')
+        else:
+            try:
+                new_user = User(nombre= name,
+                                email= email,
+                                usuario= username,
+                                password= generate_password_hash(password, method='sha256'),
+                                es_propietario= False,
+                                parqueadero_id= parqueadero,
+                                rol_id= rol_id)
+                db.session.add(new_user)
+                
+                token = generate_confirmation_token(new_user.email)
+                confirm_url = url_for('auth.confirm_email', token=token, _external=True)
+                html = render_template('sitio/user/confirmar_email.html', confirm_url=confirm_url)
+                subject = "PoliParkingSystem. Confirmación de correo."
+                send_email(new_user.email, subject, html)
+                db.session.commit()
+
+                flash('Un mensaje de confirmación de cuenta ha sido enviado a tu correo', 'success')
+                return redirect(url_for('auth.login'))
+            except BaseException as error:
+                db.session.rollback()
+    else:
+        return render_template('/admin/register.html')
+
+@auth.route('/register/admin', methods=['GET', 'POST'])
+def register_admin():
     list_parking = Parqueadero.query.with_entities(Parqueadero.id, Parqueadero.nombre).all()
     lista_roles = Rol.query.with_entities(Rol.id, Rol.nombre).all()
+    list_func = TipoFuncionario.query.all()
+
 
     contexto = {"lista_roles": lista_roles,
+                "lista_tipof": list_func,
                 "lista_parking": list_parking}
 
     if request.method == 'POST':
@@ -65,22 +121,27 @@ def register():
         else:
             parqueadero = int(request.form.get('parking'))
 
+        if not request.form.get('tipo_func'):
+            tipo_func = None
+        else:
+            tipo_func = int(request.form.get('tipo_func'))
+
         if not rol_id or rol_id == 1:
             parqueadero = None
 
         if password != confirmpassword:
             flash('Las contraseñas no coinciden. Por favor verifique!', category='error')
-            return render_template('/admin/register.html', context=contexto)
+            return render_template('/admin/register_admin.html', context=contexto)
 
         if not propietario:
             if '@poligran.edu.co' not in email:
                 flash('El correo debe ser un correo asociado al Politécnico Grancolombiano. Por favor verifique!', category='error')
-                return render_template('/admin/register.html', context=contexto)
+                return render_template('/admin/register_admin.html', context=contexto)
         
         user = User.query.filter_by(email=email).first()
         if user:
             flash('Ya existe un usuario con el correo ingresado. Por favor verifique!', category='error')
-            return render_template('/admin/register.html', context=contexto)
+            return render_template('/admin/register_admin.html', context=contexto)
         else:
             try:
                 new_user = User(nombre= name,
@@ -89,7 +150,8 @@ def register():
                                 password= generate_password_hash(password, method='sha256'),
                                 es_propietario= propietario,
                                 parqueadero_id= parqueadero,
-                                rol_id= rol_id)
+                                rol_id= rol_id,
+                                tipo_funcionario_id= tipo_func)
                 db.session.add(new_user)
                 
                 token = generate_confirmation_token(new_user.email)
@@ -99,12 +161,12 @@ def register():
                 send_email(new_user.email, subject, html)
                 db.session.commit()
 
-                flash('Un mensaje de confirmación de cuenta ha sido enviado a tu correo', 'success')
-                return redirect(url_for('auth.login'))
+                flash('Un mensaje de confirmación de cuenta ha sido enviado al correo', 'success')
+                return render_template('/admin/register_admin.html', context=contexto)
             except BaseException as error:
                 db.session.rollback()
     else:
-        return render_template('/admin/register.html', context=contexto)
+        return render_template('/admin/register_admin.html', context=contexto)
 
 @auth.route('/logout')
 @login_required
@@ -212,3 +274,36 @@ def change_password_post():
 
         flash('La contraseña fue actualizada correctamente.', 'success')
         return redirect(url_for('auth.login'))
+
+
+@auth.route('/perfil/modificar', methods=['GET', 'POST'])
+def modificar_perfil():
+    if request.method == 'POST':
+        current_password = request.form.get('name')
+        password = request.form.get('password')
+        confirmpassword = request.form.get('confirmpassword')
+
+        if password != confirmpassword:
+            flash('Las contraseñas no coinciden. Por favor verifique!', category='error')
+            return render_template('/sitio/user/perfil.html')
+
+        tmp_usuario = (session['user']['parqueadero'])
+        user = User.query.filter_by(usuario=tmp_usuario).first()
+        if not user:
+            flash('El usuario no es válido. Por favor verifique!', category='error')
+            return render_template('/sitio/user/perfil.html')
+
+        if not check_password_hash(user.password, current_password):
+            flash('La contraseña no es válida. Por favor verifique!', category='error')
+            return render_template('/sitio/user/perfil.html')
+        else:
+            try:
+                user.password = generate_password_hash(password, method='sha256')
+                db.session.commit()
+
+                flash('Se cambió la contraseña correctamente!', 'success')
+                return render_template('/sitio/user/perfil.html')
+            except BaseException as error:
+                db.session.rollback()
+    else:
+        return render_template('/sitio/user/perfil.html')

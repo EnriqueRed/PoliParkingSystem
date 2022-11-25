@@ -1,14 +1,13 @@
 {% extends "admin/base.html" %} {% block title %}Registro | Sistema Gestión Parqueaderos Politécnico Grancolombiano{% endblock %}
 
 {% block content %}
-        
     <section class="section register min-vh-100 d-flex flex-column align-items-center justify-content-center py-4">
         <div class="container">
             <div class="row justify-content-center">
                 <div class="col-lg-5 col-md-7 d-flex flex-column align-items-center justify-content-center">
                     <div class="d-flex justify-content-center py-4">
-                        <a href="sitio/index.html" class="logo d-flex align-items-center w-auto">
-                        <img src="static/img/polilogo.png" alt="">
+                        <a href="/" class="logo d-flex align-items-center w-auto">
+                        <img src="static/img/polilogo.png" alt=""> 
                         <span class="d-none d-lg-block">PoliParking System</span>
                         </a>
                     </div><!-- End Logo -->
@@ -55,35 +54,6 @@
                                 </div> 
 
                                 <div class="col-12">
-                                    <label for="rol" class="form-label">Rol de usuario</label>
-                                    <select id="rol_select" class="form-select" aria-label="Default select example" name="rol" onchange="change_rol(this);" required>
-                                        <option value="" selected>Seleccionar opción</option>
-                                        {% for row in context["lista_roles"] %}
-                                        <option value={{row.id}}>{{row.nombre}}</option>
-                                        {% endfor %}
-                                    </select>
-                                </div>
-
-                                <div class="col-12" id="propietario_div" style="visibility: hidden;">
-                                    <div class="form-check">
-                                        <input class="form-check-input" type="checkbox" name="propietario" id="propietario">
-                                        <label class="form-check-label" for="propietario">
-                                        Es propietario
-                                        </label>
-                                    </div>
-                                </div>
-
-                                <div class="col-12" id="parking_div" style="visibility: hidden;">
-                                    <label for="parking" class="form-label">Parqueadero</label>
-                                    <select id="parking_select" class="form-select" aria-label="Default select example" name="parking">
-                                        <option value="" selected>Seleccionar opción</option>
-                                        {% for row in context["lista_parking"] %}
-                                        <option value={{row.id}}>{{row.nombre}}</option>
-                                        {% endfor %}
-                                    </select>
-                                </div>
-
-                                <div class="col-12">
                                     <div class="form-check">
                                         <input class="form-check-input" name="terms" type="checkbox" value="" id="acceptTerms" required>
                                         <label class="form-check-label" for="acceptTerms">Estoy de acuerdo y acepto los <a href="#">terminos y condiciones</a></label>
@@ -103,23 +73,5 @@
             </div>
         </div>
     </section>
-
-    <script type="text/javascript">
-        function change_rol(sel)
-        {
-            if (sel.value != 1){
-                document.getElementById("parking_div").style.visibility = "visible";
-                document.getElementById("propietario_div").style.visibility = "visible";
-                document.getElementById("propietario").checked = true;
-            } 
-            else
-            {
-                document.getElementById("parking_div").style.visibility = "hidden";
-                document.getElementById("propietario_div").style.visibility = "hidden";
-                document.getElementById("propietario").checked = false;
-            }
-        }
-    </script>
-
 {% endblock %}
 

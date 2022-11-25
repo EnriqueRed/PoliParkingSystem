@@ -182,13 +182,13 @@ def get_users_indic(return_context=0,optionid=0):
 @login_required
 def get_recent_mov(return_context=0):
     sql = '''
-        select A.id, C.nombre, B.placa,
+        select A.id, coalesce(C.nombre, 'No registrado') as nombre, A.placa,
                 coalesce(substring(cast(A.fecha_ingreso as varchar(50)), 12,5), '-') as ingreso,
                 coalesce(substring(cast(A.fecha_salida  as varchar(50)), 12,5), '-') as salida,
                 A.estado 
         from movimiento_vehiculo A
-        inner join vehiculo B on A.vehiculo_id = B.id 
-        inner join "user" C on B.user_id = C.id
+        left join vehiculo B on A.vehiculo_id = B.id 
+        left join "user" C on B.user_id = C.id
         where A.parqueadero_id = %s
         order by estado asc, id desc
         limit 5

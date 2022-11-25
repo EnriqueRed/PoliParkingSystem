@@ -36,6 +36,7 @@ def create_app():
     from .views.main import main
     from .views.vehicles import vehicles
     from .views.parking import parkings
+    from .views.tariff import tariff
     from .views.movvehicle import mov_vehicles
     from .views.dashboard import dashboard
     from .auth import auth
@@ -58,6 +59,7 @@ def create_app():
     app.register_blueprint(auth, url_prefix='/')
     app.register_blueprint(vehicles, url_prefix='/')
     app.register_blueprint(parkings, url_prefix='/')
+    app.register_blueprint(tariff, url_prefix='/')
     app.register_blueprint(mov_vehicles, url_prefix='/')
     app.register_blueprint(dashboard, url_prefix='/')
 

@@ -53,7 +53,9 @@
                             <td>{{row.minutos}}</td>
                             <td>{{row.estado}}</td>
                             <td>
+                                {% if row.salida is not none %}
                                 <button data-id="{{row.id}}" type="button" class="invoice_view btn btn-primary"><i class="ri-search-line"></i></button>
+                                {% endif %}
                             </td>
                         </tr>
                         {% endfor %}

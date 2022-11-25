@@ -2,7 +2,7 @@
 <html>
     <head>
         <meta charset="utf-8">
-        <title>Factura {{context['placa']}}</title>
+        <title>Factura {{context["report"]["placa"]}}</title>
 
         <style>
         .invoice-box {
@@ -100,71 +100,52 @@
         <div class="invoice-box">
             <table cellpadding="0" cellspacing="0">
                 <tr class="top">
-                <td colspan="2">
-                <table>
-                <tr>
-                <td class="title">
-                <img src="http://127.0.0.1:5000/static/img/polilogo.png" style="height: 100px;">
-                </td>
-                <td>
-                PoliParking System<br>
-                Nombre Parqueadero<br>
-                NIT 123.453.789<br>
-                Factura Número FV-1
-                </td>
-                </tr>
-                </table>
-                </td>
+                    <td colspan="2">
+                        <table>
+                            <tr>
+                                <td class="title">
+                                    <img src="http://127.0.0.1:5000/static/img/polilogo.png" style="height: 50px;">
+                                </td>
+                                <td>
+                                    {{context["report"]["nombre"]}}<br>
+                                    NIT {{context["report"]["nit"]}}<br>
+                                    Bogotá, {{context["report"]["direccion"]}}
+                                </td>
+                            </tr>
+                        </table>
+                    </td>
                 </tr>
 
                 <tr class="information">
-                <td colspan="2">
-                <table>
-                <tr>
-                <td>
-                Entrada: 22/11/2022 20:00<br>
-                Salida: 22/11/2022 20:25<br>
-                Bogotá, Cra 10 # 20-36
-                </td>
-                <td>
-                LA EMPRESA NO RESPONDE POR DAÑO PERDIDA DETERIORO OCURRIDOS POR MOTIN, INCENDIO, TERREMOTO, ATRACOS Y DEMAS SITUACIONES QUE SE PRESENTEN  QUE SEAN AJENAS A NUESTRO SERVICIO<br>
-                SOMOS RETENEDORES DE IVA R/SIMPLIFICADO
-                </td>
-                </tr>
-                </table>
-                </td>
-                </tr>
-
-                <tr class="heading">
-                <td>
-                Tarifa
-                </td>
-                <td>
-                    Minutos
-                </td>
-                <td>
-                Precio por minuto
-                </td>
-                </tr>
-
-                <tr class="item">
-                <td>
-                Estudiante
-                </td>
-                <td>
-                    25
-                </td>
-                <td>
-                $54
-                </td>
-                </tr>
-
-                <tr class="total">
-                <td></td>
-                <td></td>
-                <td>
-                Total: $1350
-                </td>
+                    <td colspan="2">
+                        <table>
+                            <tr>
+                                <td>
+                                    Factura Número FV-{{context["report"]["id"]}}<br>
+                                    Placa:&emsp;&emsp;&emsp;&emsp;{{context["report"]["placa"]}}&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&nbsp;&nbsp;&nbsp;<br>
+                                    Tarifa:&emsp;&emsp;&emsp;&emsp;{{context["report"]["tarifa"]}}&emsp;&emsp;&emsp;&emsp;&nbsp;&nbsp;<br>
+                                    Entrada:&emsp;&emsp;&emsp;{{context["report"]["fecha_ingreso"]}}&emsp;Hora:&emsp;{{context["report"]["hora_ingreso"]}}<br>
+                                    Salida:&nbsp;&nbsp;&emsp;&emsp;&emsp;{{context["report"]["fecha_salida"]}}&emsp;Hora:&emsp;{{context["report"]["hora_salida"]}}
+                                </td>
+                                <td>
+                                    TIEMPO A FACTURAR&emsp;&emsp;&emsp;{{context["report"]["tiempo"]}}<br>
+                                    VALOR DEL MINUTO&emsp;&emsp;&emsp;${{context["report"]["valor_minuto"]}}&nbsp;
+                                </td>
+                                <td>
+                                    TOTAL A PAGAR&emsp;&emsp;&emsp;${{context["report"]["total_a_pagar"]}}
+                                </td>
+                                <td>
+                                    LA EMPRESA NO RESPONDE POR<br>
+                                    DAÑO PERDIDA DETERIORO OCURRIDOS<br>
+                                    POR MOTIN, INCENDIO, TERREMOTO,<br>
+                                    ATRACOS Y DEMAS SITUACIONES QUE<br>
+                                    SE PRESENTEN QUE SEAN AJENAS<br>
+                                    A NUESTRO SERVICIO.<br>
+                                    SOMOS RETENEDORES DE IVA R/SIMPLIFICADO
+                                </td>
+                            </tr>
+                        </table>
+                    </td>
                 </tr>
             </table>
         </div>

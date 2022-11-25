@@ -32,7 +32,7 @@
         <header id="header" class="header fixed-top d-flex align-items-center">
 
             <div class="d-flex align-items-center justify-content-between">
-            <a href="sitio/index.html" class="logo d-flex align-items-center">
+            <a href="/" class="logo d-flex align-items-center">
                 <img src="{{ url_for('static', filename= '/img/polilogo.png') }}" alt="">
                 <span class="d-none d-lg-block">Parking System</span>
             </a>
@@ -110,7 +110,7 @@
                     </li>
 
                     <li>
-                    <a class="dropdown-item d-flex align-items-center" href="users-profile.html">
+                    <a class="dropdown-item d-flex align-items-center" href="/perfil/modificar">
                         <i class="bi bi-person"></i>
                         <span>Mi Perfil</span>
                     </a>
@@ -173,6 +173,19 @@
             <li class="nav-heading">Páginas</li>
 
             <li class="nav-item">
+                <a class="nav-link collapsed" data-bs-target="#admin-nav" data-bs-toggle="collapse" href="#">
+                <i class="ri-admin-line"></i><span>Administrador</span><i class="bi bi-chevron-down ms-auto"></i>
+                </a>
+                <ul id="admin-nav" class="nav-content collapse " data-bs-parent="#sidebar-nav">
+                <li>
+                    <a href="/register/admin">
+                    <i class="bi bi-circle"></i><span>Crear Cuenta</span>
+                    </a>
+                </li>
+                </ul>
+            </li><!-- End Admin Nav -->
+
+            <li class="nav-item">
                 <a class="nav-link collapsed" data-bs-target="#parking-nav" data-bs-toggle="collapse" href="#">
                 <i class="bi bi-p-square"></i><span>Parqueaderos</span><i class="bi bi-chevron-down ms-auto"></i>
                 </a>
@@ -180,6 +193,11 @@
                 <li>
                     <a href="/parqueadero">
                     <i class="bi bi-circle"></i><span>Ver Parqueaderos</span>
+                    </a>
+                </li>
+                <li>
+                    <a href="/tarifa">
+                    <i class="bi bi-circle"></i><span>Tarifas</span>
                     </a>
                 </li>
                 <li>

@@ -6,15 +6,18 @@
                     <br>
                     <form action="/mov_vehiculo/registrar" method="post" id="addmov">
                         <div class="row mb-3">
-                            <label class="col-sm-10 offset-sm-1 col-form-label">Vehículo</label>
+                            <label class="col-sm-5 offset-sm-1 col-form-label">Vehículo</label>
+                            <label class="col-sm-5 col-form-label">Tipo</label>
                         </div>
                         <div class="row mb-3">
-                            <div class="col-sm-10 offset-sm-1">
-                                <select class="form-select" aria-label="Default select example" name="vehicle" required>
+                            <div class="col-sm-5 offset-sm-1">
+                                <input type="text" class="form-control" name="placa" required> 
+                            </div>
+                            <div class="col-sm-5">
+                                <select class="form-select" aria-label="Default select example" name="vehicle_type" required>
                                     <option value="" selected>Seleccionar opción</option>
-                                    {% for row in context["lista_vehiculos"] %}
-                                    <option value={{row.id}}>{{row.placa}} | {{row.tipo}}</option>
-                                    {% endfor %}
+                                    <option value="1">Moto</option>
+                                    <option value="2">Carro</option>
                                 </select>
                             </div>
                         </div>

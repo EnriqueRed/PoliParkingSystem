@@ -7,6 +7,8 @@ Create Date: 2022-11-15 13:49:21.467775
 """
 from alembic import op
 import sqlalchemy as sa
+from sqlalchemy.sql import table, column
+from sqlalchemy import String, Integer, Date
 
 
 # revision identifiers, used by Alembic.
@@ -23,6 +25,19 @@ def upgrade():
     sa.Column('nombre', sa.String(length=150), nullable=True),
     sa.PrimaryKeyConstraint('id')
     )
+
+    tipo_funcionario_table = table('tipo_funcionario',
+        column('id', Integer),
+        column('nombre', String)
+    )
+    op.bulk_insert(tipo_funcionario_table,
+    [
+        {'id':1, 'nombre':'Tercero'},
+        {'id':2, 'nombre':'Estudiante'},
+        {'id':3, 'nombre':'Funcionario'},
+
+    ])
+
     op.create_table('tarifa',
     sa.Column('id', sa.Integer(), nullable=False),
     sa.Column('nombre', sa.String(length=150), nullable=True),
