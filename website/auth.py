@@ -3,7 +3,7 @@ from werkzeug.security import generate_password_hash, check_password_hash
 from flask_login import login_user, login_required, logout_user, current_user
 from .models import User, Rol, Parqueadero, TipoFuncionario
 from .business.email_send import generate_confirmation_token, send_email, confirm_token
-
+import base64
 from . import db
 
 auth = Blueprint('auth', __name__)
@@ -14,7 +14,7 @@ def login():
         username = request.form.get('username')
         password = request.form.get('password')
 
-        user = User.query.filter_by(usuario=username).first()
+        user = User.query.filter_by(usuario=username).first_or_404()
         if user:
             if not user.confirmed:
                 flash('Se debe confirmar la cuenta antes de ingresar. Por favor verifique!', category='error')
@@ -36,6 +36,13 @@ def login():
             flash('El usuario no existe. Por favor verifique!', category='error')
 
     return render_template('/admin/login.html')
+
+@auth.route('/get_image', methods=['GET'])
+def get_image():
+    tmp_usuario = (session['user']['usuario'])
+    user = User.query.filter_by(usuario=tmp_usuario).first_or_404()
+
+    return user.imagen
 
 @auth.route('/register', methods=['GET', 'POST'])
 def register():
@@ -278,32 +285,58 @@ def change_password_post():
 
 @auth.route('/perfil/modificar', methods=['GET', 'POST'])
 def modificar_perfil():
-    if request.method == 'POST':
-        current_password = request.form.get('name')
-        password = request.form.get('password')
-        confirmpassword = request.form.get('confirmpassword')
+    tmp_usuario = (session['user']['usuario'])
+    user = User.query.filter_by(usuario=tmp_usuario).first()
 
-        if password != confirmpassword:
-            flash('Las contraseñas no coinciden. Por favor verifique!', category='error')
-            return render_template('/sitio/user/perfil.html')
+    contexto = {"nombre": user.nombre,
+                "imagen": user.imagen}
 
-        tmp_usuario = (session['user']['parqueadero'])
-        user = User.query.filter_by(usuario=tmp_usuario).first()
-        if not user:
+    if not user:
             flash('El usuario no es válido. Por favor verifique!', category='error')
-            return render_template('/sitio/user/perfil.html')
+            return render_template('/sitio/user/perfil.html', context=contexto)
 
-        if not check_password_hash(user.password, current_password):
-            flash('La contraseña no es válida. Por favor verifique!', category='error')
-            return render_template('/sitio/user/perfil.html')
+    if request.method == 'POST':
+        option = None
+        if 'file' in request.files:
+            image = request.files['file']
+            option = '1'
+            base64_image = 'data:' + image.content_type + ';base64,' + base64.b64encode(image.read()).decode("utf-8")
         else:
+            option = '2'
+
+        if option == '1':
+            nombre = request.form.get('fullName')
+        elif option == '2':
+            current_password = request.form.get('currentPassword')
+            password = request.form.get('password')
+            confirmpassword = request.form.get('confirmpassword')
+
+            if password != confirmpassword:
+                flash('Las contraseñas no coinciden. Por favor verifique!', category='error')
+                return render_template('/sitio/user/perfil.html', context=contexto)        
+
+        if option == '1':
             try:
-                user.password = generate_password_hash(password, method='sha256')
+                user.nombre = nombre
+                if image.filename:
+                    user.imagen = base64_image
                 db.session.commit()
 
-                flash('Se cambió la contraseña correctamente!', 'success')
-                return render_template('/sitio/user/perfil.html')
+                return redirect(url_for('auth.modificar_perfil'))
             except BaseException as error:
                 db.session.rollback()
+        elif option == '2':
+            if not check_password_hash(user.password, current_password):
+                flash('La contraseña actual no es válida. Por favor verifique!', category='error')
+                return render_template('/sitio/user/perfil.html', context=contexto)
+            else:
+                try:
+                    user.password = generate_password_hash(password, method='sha256')
+                    db.session.commit()
+
+                    flash('Se cambió la contraseña correctamente!', 'success')
+                    return render_template('/sitio/user/perfil.html', context=contexto)
+                except BaseException as error:
+                    db.session.rollback()
     else:
-        return render_template('/sitio/user/perfil.html')
+        return render_template('/sitio/user/perfil.html', context=contexto)

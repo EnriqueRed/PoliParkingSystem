@@ -22,5 +22,20 @@
         
         <!-- Template Main JS File -->
         <script src="{{ url_for('static', filename= '/js/main.js') }}"></script>
+
+        <script>
+            $( document ).ready( function() {
+                readURL();
+                function readURL(){
+                    $.ajax({
+                        url: '/get_image',
+                        type: 'get',
+                        success: function(data){
+                            document.getElementById('bn_profile_img').src = data;
+                        }
+                    });
+                }
+            } )
+        </script>
     </body>
 </html>

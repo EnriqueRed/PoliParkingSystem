@@ -14,13 +14,33 @@
 
     <section class="section profile">
         <div class="row">
-            <div class="col-xl-4">
+            <div class="col-xl-4"> 
+                {% with messages = get_flashed_messages(with_categories=true) %}
+                {% if messages %}
+                    {% for category, message in messages %}
+                        {% if category == 'error' %}
+                            <div class="alert alert-danger alert-dismissible fade show" role="alert">
+                                {{ message }}
+                                <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+                            </div>
+                        {% else  %}
+                            <div class="alert alert-success alert-dismissible fade show" role="alert">
+                                {{ message }}
+                                <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+                            </div>
+                        {% endif %}
+                    {% endfor %}
+                {% endif %}
+                {% endwith %}
 
                 <div class="card">
                     <div class="card-body profile-card pt-4 d-flex flex-column align-items-center">
-
-                        <img src="assets/img/profile-img.jpg" alt="Profile" class="rounded-circle">
-                        <h2>{{ session.user['nombre'] }}</h2>
+                        {% if context['imagen'] %}
+                        <img src="{{context['imagen']}}" alt="Profile" class="rounded-circle">
+                        {% else  %}
+                        <img src="{{ url_for('static', filename= '/img/profile_image.jpg') }}" alt="Profile" class="rounded-circle">
+                        {% endif %}
+                        <h2>{{context['nombre']}}</h2>
                         <h3>{{ session.user['usuario'] }}</h3>
                         <div class="social-links mt-2">
                             PoliParking System
@@ -49,14 +69,21 @@
                             <div class="tab-pane fade profile-edit pt-3 active show" id="profile-edit" role="tabpanel">
 
                             <!-- Profile Edit Form -->
-                            <form action="/perfil/modificar" class="needs-validation" method="post">
+                            <form action="/perfil/modificar" class="needs-validation" method="post" enctype="multipart/form-data">
                                 <div class="row mb-3">
                                     <label for="profileImage" class="col-md-4 col-lg-3 col-form-label">Imagen de Perfil</label>
                                     <div class="col-md-8 col-lg-9">
-                                        <img src="assets/img/profile-img.jpg" alt="Profile">
+                                        {% if context['imagen'] %}
+                                        <img src="{{context['imagen']}}" alt="Profile" id="tmp_profile_img">
+                                        {% else  %}
+                                        <img src="{{ url_for('static', filename= '/img/profile_image.jpg') }}" alt="Profile" id="tmp_profile_img">
+                                        {% endif %}
+                                        
                                         <div class="pt-2">
-                                            <a href="#" class="btn btn-primary btn-sm" title="Upload new profile image"><i class="bi bi-upload"></i></a>
-                                            <a href="#" class="btn btn-danger btn-sm" title="Remove my profile image"><i class="bi bi-trash"></i></a>
+                                            <label for="img_file" class="col-md-4 col-lg-3 col-form-label">
+                                                <i class="bi bi-upload">  Cargar imagen</i>
+                                            </label>
+                                            <input type="file" name="file" id="img_file" hidden/>
                                         </div>
                                     </div>
                                 </div>
@@ -64,7 +91,7 @@
                                 <div class="row mb-3">
                                     <label for="fullName" class="col-md-4 col-lg-3 col-form-label">Nombre Completo</label>
                                     <div class="col-md-8 col-lg-9">
-                                        <input name="fullName" type="text" class="form-control" id="fullName" value="Kevin Anderson">
+                                        <input name="fullName" type="text" class="form-control" id="fullName" value="{{context['nombre']}}">
                                     </div>
                                 </div>
 
@@ -81,7 +108,7 @@
                                 <div class="row mb-3">
                                     <label for="currentPassword" class="col-md-4 col-lg-3 col-form-label">Contraseña Actual</label>
                                     <div class="col-md-8 col-lg-9">
-                                        <input name="password" type="password" class="form-control" id="currentPassword">
+                                        <input name="currentPassword" type="password" class="form-control" id="currentPassword" required>
                                     </div>
                                 </div>
 
@@ -113,6 +140,39 @@
     </section>
 </main>
 
-
-
 {% include 'sitio/footer.html' %}
+
+<script>
+    document.getElementById('img_file').addEventListener('change', readURL, true);
+    function readURL(){
+        var file = document.getElementById("img_file").files[0];
+        var reader = new FileReader();
+
+        var ext = file.name.split('.').pop().toLowerCase();
+        var g_ext = ['gif','png','jpg','jpeg','bmp'];
+
+        if (!(g_ext.includes(ext)))
+        {
+            document.getElementById('img_file').value = null;
+            document.getElementById('tmp_profile_img').src = null;
+            alert("El formato de la imagen no es válido.");
+            return;
+        }
+        
+        var fsize = file.size||file.fileSize;
+        if (fsize > 1000000)
+        {
+            document.getElementById('img_file').value = null;
+            document.getElementById('tmp_profile_img').src = null;
+            alert("El tamaño de la imagen no puede ser superior a 1Mb");
+            return;
+        }
+        reader.onloadend = function(){
+            document.getElementById('tmp_profile_img').src = reader.result;
+        }
+        if(file){
+            reader.readAsDataURL(file);
+            }else{
+            }
+    }
+</script>
