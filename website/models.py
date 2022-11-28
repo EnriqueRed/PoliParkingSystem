@@ -84,3 +84,11 @@ class Tarifa(db.Model):
     valor_mensualidad = db.Column(db.Numeric(10,2))
     tipo_funcionario_id = db.Column(db.Integer, db.ForeignKey('tipo_funcionario.id'))
 
+# Notificaciones --------------------------------------------------------------------------
+class Notificacion(db.Model):
+    id = db.Column(db.Integer, primary_key=True)
+    asunto = db.Column(db.String(100))
+    mensaje = db.Column(db.Text)
+    user_id = db.Column(db.Integer, db.ForeignKey('user.id'))
+    fecha_expira = db.Column(db.DateTime(timezone=False))
+

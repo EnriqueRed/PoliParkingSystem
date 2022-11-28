@@ -39,6 +39,7 @@ def create_app():
     from .views.tariff import tariff
     from .views.movvehicle import mov_vehicles
     from .views.dashboard import dashboard
+    from .views.notifications import notifications
     from .auth import auth
 
     def not_found(e):
@@ -62,6 +63,7 @@ def create_app():
     app.register_blueprint(tariff, url_prefix='/')
     app.register_blueprint(mov_vehicles, url_prefix='/')
     app.register_blueprint(dashboard, url_prefix='/')
+    app.register_blueprint(notifications, url_prefix='/')
 
     from .models import User, Rol
 

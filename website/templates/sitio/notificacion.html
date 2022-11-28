@@ -1,0 +1,75 @@
+{% include 'sitio/header.html' %}
+<main id="main" class="main">
+    <div class="card">
+        <div class="container">
+            {% with messages = get_flashed_messages(with_categories=true) %}
+            {% if messages %}
+                {% for category, message in messages %}
+                    {% if category == 'error' %}
+                        <div class="alert alert-danger alert-dismissible fade show" role="alert">
+                            {{ message }}
+                            <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+                        </div>
+                    {% else  %}
+                        <div class="alert alert-success alert-dismissible fade show" role="alert">
+                            {{ message }}
+                            <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+                        </div>
+                    {% endif %}
+                {% endfor %}
+            {% endif %}
+            {% endwith %}
+            <div class="container">
+                {% block content %}
+                {% endblock %}
+            </div>
+            <div class="row justify-content-center">
+                <div class="col-lg-6 col-md-8 d-flex flex-column align-items-center justify-content-center">
+                    <div class="pt-4 pb-2">
+                        <h5 class="card-title text-center pb-0 fs-4">Enviar mensaje</h5>
+                        <p class="text-center small">Digita los datos para el envío del mensaje</p>
+                    </div>
+
+                    <form action="/notificacion/crear" class="row g-3 needs-validation" method="post">
+                        <div class="col-12" id="usuario_div">
+                            <label for="usuario" class="form-label">Usuario</label>
+                            <select id="usuario_select" class="form-select" aria-label="Default select example" name="usuario">
+                                <option value="" selected>Seleccionar opción</option>
+                                {% for row in context["lista_usuario"] %}
+                                <option value={{row.id}}>{{row.placa}} | {{row.tipo}} | {{row.usuario}}</option>
+                                {% endfor %}
+                            </select>
+                        </div>
+
+                        <div class="col-12">
+                            <label for="asunto" class="form-label">Asunto</label>
+                            <input type="text" name="asunto" class="form-control" id="asunto" required>
+                            <div class="invalid-feedback">Por favor digita un asunto válido</div>
+                        </div>
+
+                        <div class="col-12">
+                            <label for="mensaje" class="form-label">Mensaje</label>
+                            <textarea name="mensaje" class="form-control" id="mensaje" style="height: 150px" required></textarea>
+                            <div class="invalid-feedback">Por favor digita un mensaje válido</div>
+                        </div>
+<!-- 
+                        <div class="form-check">
+                            <input class="form-check-input" type="checkbox" name="enviar_correo" id="enviar_correo">
+                            <label class="form-check-label" for="enviar_correo">
+                            Enviar correo
+                            </label>
+                        </div> -->
+
+                        <div class="col-12">
+                            <br><br>
+                            <button class="btn btn-primary w-100" type="submit">Enviar mensaje</button>
+                            <br><br><br><br>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+{% include 'sitio/footer.html' %}
