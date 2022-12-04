@@ -18,6 +18,7 @@ pandas = "*"
 flask-mail = "*"
 python-dotenv = "*"
 pdfkit = "*"
+secure = "*"
 
 [dev-packages]
 

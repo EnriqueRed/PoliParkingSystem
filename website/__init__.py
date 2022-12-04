@@ -13,18 +13,26 @@ migrate = Migrate()
 mail = Mail()
 
 def create_app():
-    # print()
+    # Database config
+    host = os.getenv("DBHOST")
+    port = os.getenv("DBPORT")
+    db_name = os.getenv("DBNAME")
+    user = os.getenv("DBUSER")
+    password = os.getenv("DBPASS")
+
+    db_uri = "postgresql://" + user + ":" + password + "@" + host + "/" + db_name
+
     app = Flask(__name__)
     app.config['SECRET_KEY'] = 'Xp2s5v8y/B?E(H+MbQeThWmYq3t6w9z$C&F)J@NcRfUjXn2r4u7x!A%D*G-KaPdS'
     app.config['SECURITY_PASSWORD_SALT'] = 'W4yyhZVAPYkF03NR9cuMBJ2jxGDsVT'
-    app.config['SQLALCHEMY_DATABASE_URI'] = "postgresql://poli:Poli_123@localhost/PoliParkingSystem"
-    app.config['engine'] = db.create_engine("postgresql://poli:Poli_123@localhost/PoliParkingSystem",{})
-    app.config['MAIL_SERVER']='smtp.gmail.com'
-    app.config['MAIL_PORT'] = 587
-    app.config['MAIL_USERNAME'] = 'poliparkingsystem@gmail.com'
-    app.config['MAIL_DEFAULT_SENDER'] = 'poliparkingsystem@gmail.com'
-    app.config['MAIL_PASSWORD'] = 'arptglmqmwlqxxjn'
-    app.config['MAIL_USE_TLS'] = True
+    app.config['SQLALCHEMY_DATABASE_URI'] = db_uri
+    app.config['engine'] = db.create_engine(db_uri,{})
+    app.config['MAIL_SERVER']=os.getenv("MAIL_SERVER")
+    app.config['MAIL_PORT'] = os.getenv("MAIL_PORT")
+    app.config['MAIL_USERNAME'] = os.getenv("MAIL_USERNAME")
+    app.config['MAIL_DEFAULT_SENDER'] = os.getenv("MAIL_USERNAME")
+    app.config['MAIL_PASSWORD'] = os.getenv("MAIL_PASSWORD")
+    app.config['MAIL_USE_TLS'] = os.getenv("MAIL_USE_TLS")
     db.init_app(app)
 
     # https://github.com/tschoonj/GTK-for-Windows-Runtime-Environment-Installer/releases

@@ -77,9 +77,8 @@ def ajax_view_invoice():
         select C.nombre, C.nit, C.direccion, A.id::varchar, B.placa, D.nombre as tarifa, 
                 substring(B.fecha_ingreso::varchar, 1, 10) as fecha_ingreso, substring(B.fecha_ingreso::varchar, 12, 5) as hora_ingreso,
                 substring(B.fecha_salida::varchar, 1, 10) as fecha_salida, substring(B.fecha_salida::varchar, 12, 5) as hora_salida,
-                date_part('minute', B.fecha_salida) - date_part('minute', B.fecha_ingreso) as minutos, D.valor_minuto, A.total_a_pagar, 
-                lpad((date_part('hour', B.fecha_salida) - date_part('hour', B.fecha_ingreso))::varchar, 2, '0') || ':'::text ||
-                lpad((date_part('minute', B.fecha_salida) - date_part('minute', B.fecha_ingreso))::varchar, 2, '0') as tiempo
+                extract(epoch from  (B.fecha_salida - B.fecha_ingreso))/60 as minutos, D.valor_minuto, A.total_a_pagar, 
+                (B.fecha_salida - B.fecha_ingreso)::varchar as tiempo
         from factura A
         inner join movimiento_vehiculo B on A.movimiento_id = B.id and B.id = %s
         inner join parqueadero C on A.parqueadero_id = C.id 
