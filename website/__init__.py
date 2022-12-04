@@ -14,11 +14,11 @@ mail = Mail()
 
 def create_app():
     # Database config
-    host = os.getenv("DBHOST")
-    port = os.getenv("DBPORT")
-    db_name = os.getenv("DBNAME")
-    user = os.getenv("DBUSER")
-    password = os.getenv("DBPASS")
+    host = str(os.getenv("DBHOST"))
+    port = str(os.getenv("DBPORT"))
+    db_name = str(os.getenv("DBNAME"))
+    user = str(os.getenv("DBUSER"))
+    password = str(os.getenv("DBPASS"))
 
     db_uri = "postgresql://" + user + ":" + password + "@" + host + "/" + db_name
 
