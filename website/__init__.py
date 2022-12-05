@@ -73,6 +73,6 @@ def create_app():
     app.register_blueprint(dashboard, url_prefix='/')
     app.register_blueprint(notifications, url_prefix='/')
 
-    from .models import User, Rol
+    from .models import User
 
     return app
