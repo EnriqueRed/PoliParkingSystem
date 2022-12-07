@@ -32,7 +32,7 @@ h6 {
 # Main
 --------------------------------------------------------------*/
 .login_bg {
-  background-image: url('../../static/img/policampusblue.png'); 
+  background-image: url('../../img/policampusblue.png'); 
   background-repeat: no-repeat; 
   background-size: cover; 
   background-position: center;

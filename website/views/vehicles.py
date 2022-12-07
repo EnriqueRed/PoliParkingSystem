@@ -1,6 +1,4 @@
-from cmath import e
-from tkinter import E
-from flask import Blueprint, render_template, jsonify, request, redirect, url_for
+from flask import Blueprint, render_template, jsonify, request, redirect, session, url_for
 from flask_login import login_required
 from website.models import Vehiculo, Tipovehiculo, User
 from .. import db
@@ -11,6 +9,9 @@ vehicles = Blueprint('vehicles', __name__)
 @vehicles.route('/vehiculo', methods=['GET'])
 @login_required
 def get_vehiculo():
+    if session['user']['rol'] == 1:
+        return render_template('/sitio/Error404.html'), 404
+        
     vehiculos_list = Vehiculo.query.join(User).join(Tipovehiculo).with_entities(Vehiculo.id, Vehiculo.placa,User.nombre,Tipovehiculo.nombre.label("tipo"))
     list_types = Tipovehiculo.query.all()
     list_users = User.query.with_entities(User.id, User.nombre, User.usuario).order_by(User.nombre)
@@ -24,6 +25,9 @@ def get_vehiculo():
 @vehicles.route('/vehiculo/crear', methods=['POST'])
 @login_required
 def crear_vehiculo():
+    if session['user']['rol'] == 1:
+        return render_template('/sitio/Error404.html'), 404
+
     if request.method == 'POST':
         tmp_placa = request.form.get('placa')
 
@@ -45,6 +49,9 @@ def crear_vehiculo():
 @vehicles.route('/vehiculo/editar', methods=['POST'])
 @login_required
 def editar_vehiculo():
+    if session['user']['rol'] == 1:
+        return render_template('/sitio/Error404.html'), 404
+
     if request.method == 'POST':
         tmp_placa = request.form.get('placa')
         usuario = int(request.form.get('usuario'))
@@ -66,6 +73,9 @@ def editar_vehiculo():
 @vehicles.route('/ajax_get_vehiculo_id', methods=['GET','POST'])
 @login_required
 def get_vehiculo_id():
+    if session['user']['rol'] == 1:
+        return render_template('/sitio/Error404.html'), 404
+
     if request.form['vehiculoid']:
         vehiculoid = int(request.form['vehiculoid'])
     else:
@@ -86,6 +96,9 @@ def get_vehiculo_id():
 @vehicles.route('/ajax_delete_vehiculo_id', methods=['GET','POST'])
 @login_required
 def delete_vehiculo_id():
+    if session['user']['rol'] == 1:
+        return render_template('/sitio/Error404.html'), 404
+        
     if request.form['vehiculoid']:
         vehiculoid = int(request.form['vehiculoid'])
     else:

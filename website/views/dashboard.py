@@ -1,7 +1,5 @@
-from cmath import e
 from datetime import datetime, timedelta
 from dateutil.relativedelta import relativedelta
-from tkinter import E
 from flask import Blueprint, current_app, render_template, jsonify, request, redirect, session, url_for
 from flask_login import login_required
 from sqlalchemy.sql import text
@@ -16,6 +14,9 @@ dashboard = Blueprint('dashboard', __name__)
 @dashboard.route('/inicio')
 @login_required
 def inicio():
+    if session['user']['rol'] == 1:
+        return render_template('/sitio/Error404.html'), 404
+
     mov_in = get_vehiculo_in(1,2)
     mov_out = get_vehiculo_out(1,2)
     users_i = get_users_indic(1,2)
@@ -61,6 +62,9 @@ def get_dates_option(optionid):
 @dashboard.route('/ajax_get_vehiculo_in', methods=['GET','POST'])
 @login_required
 def get_vehiculo_in(return_context=0,optionid=0):
+    if session['user']['rol'] == 1:
+        return render_template('/sitio/Error404.html'), 404
+
     if not optionid:
         if request.form['optionid']:
             optionid = int(request.form['optionid'])
@@ -102,6 +106,9 @@ def get_vehiculo_in(return_context=0,optionid=0):
 @dashboard.route('/ajax_get_vehiculo_out', methods=['GET','POST'])
 @login_required
 def get_vehiculo_out(return_context=0,optionid=0):
+    if session['user']['rol'] == 1:
+        return render_template('/sitio/Error404.html'), 404
+
     if not optionid:
         if request.form['optionid']:
             optionid = int(request.form['optionid'])
@@ -145,6 +152,9 @@ def get_vehiculo_out(return_context=0,optionid=0):
 @dashboard.route('/ajax_get_users_indic', methods=['GET','POST'])
 @login_required
 def get_users_indic(return_context=0,optionid=0):
+    if session['user']['rol'] == 1:
+        return render_template('/sitio/Error404.html'), 404
+
     if not optionid:
         if request.form['optionid']:
             optionid = int(request.form['optionid'])
@@ -181,6 +191,9 @@ def get_users_indic(return_context=0,optionid=0):
 @dashboard.route('/ajax_get_recent_mov', methods=['GET','POST'])
 @login_required
 def get_recent_mov(return_context=0):
+    if session['user']['rol'] == 1:
+        return render_template('/sitio/Error404.html'), 404
+
     sql = '''
         select A.id, coalesce(C.nombre, 'No registrado') as nombre, A.placa,
                 coalesce(substring(cast(A.fecha_ingreso as varchar(50)), 12,5), '-') as ingreso,
@@ -210,6 +223,9 @@ def get_recent_mov(return_context=0):
 @dashboard.route('/ajax_get_trafico_vehiculo', methods=['GET','POST'])
 @login_required
 def get_trafico_vehiculo():
+    if session['user']['rol'] == 1:
+        return render_template('/sitio/Error404.html'), 404
+
     park_id = session['user']['parqueadero']
 
     sql = '''
@@ -253,6 +269,9 @@ def get_trafico_vehiculo():
 @dashboard.route('/ajax_get_dias_concurridos', methods=['GET','POST'])
 @login_required
 def get_dias_concurridos():
+    if session['user']['rol'] == 1:
+        return render_template('/sitio/Error404.html'), 404
+        
     sql = '''
         select * 
         from 

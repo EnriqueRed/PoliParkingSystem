@@ -1,5 +1,3 @@
-from cmath import e
-from tkinter import E
 from flask import Blueprint, current_app, render_template, jsonify, request, redirect, session, url_for 
 from flask_login import login_required
 from website.models import Tarifa, TipoFuncionario, Tipovehiculo
@@ -12,6 +10,9 @@ tariff = Blueprint('tariff', __name__)
 @tariff.route('/tarifa', methods=['GET'])
 @login_required
 def get_tarifa():
+    if session['user']['rol'] == 1:
+        return render_template('/sitio/Error404.html'), 404
+
     tarifa_list = Tarifa.query.join(TipoFuncionario).join(Tipovehiculo).with_entities(Tarifa.id, Tarifa.nombre, Tipovehiculo.nombre.label("tipo_v"),
                                             Tarifa.valor_minuto, Tarifa.valor_plena, Tarifa.valor_mensualidad, TipoFuncionario.nombre.label("tipo_f"))
 
@@ -27,6 +28,9 @@ def get_tarifa():
 @tariff.route('/tarifa/crear', methods=['POST'])
 @login_required
 def crear_tarifa():
+    if session['user']['rol'] == 1:
+        return render_template('/sitio/Error404.html'), 404
+
     if request.method == 'POST':
         nombre = request.form.get('nombre')
         tipo_v = int(request.form.get('tipo_v'))
@@ -53,6 +57,9 @@ def crear_tarifa():
 @tariff.route('/tarifa/editar', methods=['POST'])
 @login_required
 def editar_tarifa():
+    if session['user']['rol'] == 1:
+        return render_template('/sitio/Error404.html'), 404
+
     if request.method == 'POST':
         id_f = int(request.form.get('id_f'))
         nombre = request.form.get('nombre')
@@ -80,6 +87,9 @@ def editar_tarifa():
 @tariff.route('/ajax_get_tarifa_id', methods=['GET','POST'])
 @login_required
 def get_tarifa_id():
+    if session['user']['rol'] == 1:
+        return render_template('/sitio/Error404.html'), 404
+
     if request.form['tarifaid']:
         tarifaid = int(request.form['tarifaid'])
     else:
@@ -101,6 +111,9 @@ def get_tarifa_id():
 @tariff.route('/ajax_delete_tarifa_id', methods=['GET','POST'])
 @login_required
 def delete_tarifa_id():
+    if session['user']['rol'] == 1:
+        return render_template('/sitio/Error404.html'), 404
+        
     if request.form['tarifaid']:
         tarifaid = int(request.form['tarifaid'])
     else:

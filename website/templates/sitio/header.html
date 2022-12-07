@@ -100,82 +100,90 @@
         <aside id="sidebar" class="sidebar">
 
             <ul class="sidebar-nav" id="sidebar-nav">
-
-            <li class="nav-item">
-                <a class="nav-link " href="/inicio">
-                <i class="bi bi-grid"></i>
-                <span>Dashboard</span>
-                </a>
-            </li><!-- End Dashboard Nav -->
-
-            <li class="nav-item">
-                <a class="nav-link collapsed" data-bs-target="#components-nav" data-bs-toggle="collapse" href="#">
-                <i class="bi bi-menu-button-wide"></i><span>Movimiento Vehículos</span><i class="bi bi-chevron-down ms-auto"></i>
-                </a>
-                <ul id="components-nav" class="nav-content collapse " data-bs-parent="#sidebar-nav">
-                <li>
-                    <a href="/mov_vehiculo">
-                    <i class="bi bi-circle"></i><span>Ver Movimiento</span>
+                {% if session.user['rol'] != 1 %}
+                <li class="nav-item">
+                    <a class="nav-link " href="/inicio">
+                    <i class="bi bi-grid"></i>
+                    <span>Dashboard</span>
                     </a>
+                </li><!-- End Dashboard Nav -->
+                
+                <li class="nav-item">
+                    <a class="nav-link collapsed" data-bs-target="#components-nav" data-bs-toggle="collapse" href="#">
+                    <i class="bi bi-menu-button-wide"></i><span>Movimiento Vehículos</span><i class="bi bi-chevron-down ms-auto"></i>
+                    </a>
+                    <ul id="components-nav" class="nav-content collapse " data-bs-parent="#sidebar-nav">
+                    <li>
+                        <a href="/mov_vehiculo">
+                        <i class="bi bi-circle"></i><span>Ver Movimiento</span>
+                        </a>
+                    </li>
+                    </ul>
+                </li><!-- End Movimiento Vehículos Nav -->
+                {% endif %}
+
+                
+                <li class="nav-heading">Páginas</li>
+                {% if session.user['rol'] == 3 %}
+                <li class="nav-item">
+                    <a class="nav-link collapsed" data-bs-target="#admin-nav" data-bs-toggle="collapse" href="#">
+                    <i class="ri-admin-line"></i><span>Administrador</span><i class="bi bi-chevron-down ms-auto"></i>
+                    </a>
+                    <ul id="admin-nav" class="nav-content collapse " data-bs-parent="#sidebar-nav">
+                    <li>
+                        <a href="/register/admin">
+                        <i class="bi bi-circle"></i><span>Crear Cuenta</span>
+                        </a>
+                        <a href="/notificacion/crear">
+                        <i class="bi bi-circle"></i><span>Enviar Mensaje</span>
+                        </a>
+                    </li>
+                    </ul>
+                </li><!-- End Admin Nav -->
+                {% endif %}
+
+                <li class="nav-item">
+                    <a class="nav-link collapsed" data-bs-target="#parking-nav" data-bs-toggle="collapse" href="#">
+                    <i class="bi bi-p-square"></i><span>Parqueaderos</span><i class="bi bi-chevron-down ms-auto"></i>
+                    </a>
+                    <ul id="parking-nav" class="nav-content collapse " data-bs-parent="#sidebar-nav">
+                    {% if session.user['rol'] == 3 %}
+                    <li>
+                        <a href="/parqueadero">
+                        <i class="bi bi-circle"></i><span>Ver Parqueaderos</span>
+                        </a>
+                    </li>
+                    {% endif %}
+                    {% if session.user['rol'] != 1 %}
+                    <li>
+                        <a href="/tarifa">
+                        <i class="bi bi-circle"></i><span>Tarifas</span>
+                        </a>
+                    </li>
+                    {% endif %}
+                    <li>
+                        <a href="/parqueadero/disponibilidad">
+                        <i class="bi bi-circle"></i><span>Consultar Disponibilidad</span>
+                        </a>
+                    </li>
+                    </ul>
                 </li>
-                </ul>
-            </li><!-- End Movimiento Vehículos Nav -->
 
-            
-            <li class="nav-heading">Páginas</li>
+                {% if session.user['rol'] != 1 %}
+                <li class="nav-item">
+                    <a class="nav-link collapsed" href="/vehiculo">
+                    <i class="bi bi-car-front"></i>
+                    <span>Vehículos</span>
+                    </a>
+                </li><!-- End Vehículos Nav -->
+                {% endif %}
 
-            <li class="nav-item">
-                <a class="nav-link collapsed" data-bs-target="#admin-nav" data-bs-toggle="collapse" href="#">
-                <i class="ri-admin-line"></i><span>Administrador</span><i class="bi bi-chevron-down ms-auto"></i>
-                </a>
-                <ul id="admin-nav" class="nav-content collapse " data-bs-parent="#sidebar-nav">
-                <li>
-                    <a href="/register/admin">
-                    <i class="bi bi-circle"></i><span>Crear Cuenta</span>
+                <li class="nav-item">
+                    <a class="nav-link collapsed" href="{{ url_for('auth.logout') }}">
+                    <i class="bi bi-box-arrow-in-right"></i>
+                    <span>Cerrar sesión</span>
                     </a>
-                    <a href="/notificacion/crear">
-                    <i class="bi bi-circle"></i><span>Enviar Mensaje</span>
-                    </a>
-                </li>
-                </ul>
-            </li><!-- End Admin Nav -->
-
-            <li class="nav-item">
-                <a class="nav-link collapsed" data-bs-target="#parking-nav" data-bs-toggle="collapse" href="#">
-                <i class="bi bi-p-square"></i><span>Parqueaderos</span><i class="bi bi-chevron-down ms-auto"></i>
-                </a>
-                <ul id="parking-nav" class="nav-content collapse " data-bs-parent="#sidebar-nav">
-                <li>
-                    <a href="/parqueadero">
-                    <i class="bi bi-circle"></i><span>Ver Parqueaderos</span>
-                    </a>
-                </li>
-                <li>
-                    <a href="/tarifa">
-                    <i class="bi bi-circle"></i><span>Tarifas</span>
-                    </a>
-                </li>
-                <li>
-                    <a href="/parqueadero/disponibilidad">
-                    <i class="bi bi-circle"></i><span>Consultar Disponibilidad</span>
-                    </a>
-                </li>
-                </ul>
-            </li>
-
-            <li class="nav-item">
-                <a class="nav-link collapsed" href="/vehiculo">
-                <i class="bi bi-car-front"></i>
-                <span>Vehículos</span>
-                </a>
-            </li><!-- End Vehículos Nav -->
-
-            <li class="nav-item">
-                <a class="nav-link collapsed" href="{{ url_for('auth.logout') }}">
-                <i class="bi bi-box-arrow-in-right"></i>
-                <span>Cerrar sesión</span>
-                </a>
-            </li><!-- End Login Page Nav -->
+                </li><!-- End Login Page Nav -->
             </ul>
 
         </aside><!-- End Sidebar-->

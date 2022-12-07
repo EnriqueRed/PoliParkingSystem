@@ -1,5 +1,3 @@
-from cmath import e
-from tkinter import E
 from flask import Blueprint, render_template, jsonify, request, redirect, session, url_for, flash, make_response, current_app
 from flask_login import login_required
 from website.models import MovimientoVehiculo, Parqueadero, Vehiculo, Tipovehiculo, User, Factura, Tarifa
@@ -8,13 +6,15 @@ from datetime import date, datetime
 import pytz, os, pdfkit, base64
 from sqlalchemy.sql import text
 
-
 mov_vehicles = Blueprint('mov_vehicles', __name__)
 
 # Vehiculos ------------------------------------------------------------------------
 @mov_vehicles.route('/mov_vehiculo', methods=['GET'])
 @login_required
 def get_mov_vehiculo():
+    if session['user']['rol'] == 1:
+        return render_template('/sitio/Error404.html'), 404
+
     mov_vehiculo = MovimientoVehiculo.query.with_entities(MovimientoVehiculo.id, 
                                             MovimientoVehiculo.estado, MovimientoVehiculo.placa, MovimientoVehiculo.minutos,
                                             MovimientoVehiculo.fecha_ingreso.label("ingreso"),
@@ -29,6 +29,9 @@ def get_mov_vehiculo():
 @mov_vehicles.route('/ajax_register_mov', methods=['GET','POST'])
 @login_required
 def ajax_register_mov():
+    if session['user']['rol'] == 1:
+        return render_template('/sitio/Error404.html'), 404
+
     if request.form['optionid']:
         optionid = int(request.form['optionid'])
     else:
@@ -57,6 +60,9 @@ def ajax_register_mov():
 @mov_vehicles.route('/ajax_view_invoice', methods=['GET','POST'])
 @login_required
 def ajax_view_invoice():
+    if session['user']['rol'] == 1:
+        return render_template('/sitio/Error404.html'), 404
+
     if request.form['invoiceid']:
         invoiceid = int(request.form['invoiceid'])
     else:
@@ -96,7 +102,8 @@ def ajax_view_invoice():
     # Generación de la factura en PDF
     config = pdfkit.configuration(wkhtmltopdf=os.getenv("WKHTMLTOPDF_DIRECTORY"))
     rendered = render_template('/sitio/invoice_report/invoice.html', context=contexto)
-    pdf = pdfkit.from_string(rendered, False, configuration=config)
+    pdf = pdfkit.from_string(rendered, False, configuration=config) 
+    
     response = make_response(pdf)
     response.headers['Content-Type'] = 'application/pdf'
     # response.headers['Content-Disposition'] = 'attachment; filename=Factura.pdf'
@@ -110,6 +117,9 @@ def ajax_view_invoice():
 @mov_vehicles.route("/mov_vehiculo/registrar", methods=['POST'])
 @login_required
 def register_mov():
+    if session['user']['rol'] == 1:
+        return render_template('/sitio/Error404.html'), 404
+        
     if request.method == 'POST':        
         placa = request.form.get('placa')
         fecha_in = request.form.get('in_date')

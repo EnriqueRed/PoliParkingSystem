@@ -1,6 +1,4 @@
-from cmath import e
-from tkinter import E
-from flask import Blueprint, render_template, flash, request
+from flask import Blueprint, render_template, flash, request, session
 from flask_login import login_required
 from website.models import Notificacion, Vehiculo, User, Tipovehiculo
 from ..business.email_send import send_email
@@ -12,6 +10,9 @@ notifications = Blueprint('notifications', __name__)
 @notifications.route('/notificacion/crear', methods=['GET','POST'])
 @login_required
 def crear_notificacion():
+    if session['user']['rol'] == 1:
+        return render_template('/sitio/Error404.html'), 404
+        
     user_list = Vehiculo.query.join(User).join(Tipovehiculo).with_entities(User.id, Vehiculo.placa,User.usuario, User.email,Tipovehiculo.nombre.label("tipo")).order_by(Vehiculo.placa)
     contexto = {"lista_usuario": user_list}    
 
@@ -35,9 +36,10 @@ def crear_notificacion():
                 html = render_template('sitio/notificacion_correo.html', context=mensaje)
                 subject = "PoliParkingSystem. Confirmación de correo."
                 send_email(user.email, subject, html)
+
+                flash('Mensaje enviado correctamente!', category='success')
         except BaseException as error:
             db.session.rollback()
             flash('No fue posible enviar el mensaje al usuario. Intente nuevamente en unos minutos', category='error')
 
-    flash('Mensaje enviado correctamente!', category='success')
     return render_template('/sitio/notificacion.html', context=contexto)

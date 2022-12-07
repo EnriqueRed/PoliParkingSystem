@@ -15,6 +15,7 @@ def login():
         password = request.form.get('password')
 
         user = User.query.filter_by(usuario=username).first_or_404()
+        
         if user:
             if not user.confirmed:
                 flash('Se debe confirmar la cuenta antes de ingresar. Por favor verifique!', category='error')
@@ -29,7 +30,10 @@ def login():
                                     'parqueadero': user.parqueadero_id,
                                     'tipo_funcionario_id': user.tipo_funcionario_id} 
 
-                return redirect(url_for('dashboard.inicio'))
+                if user.rol_id == 1:
+                    return redirect(url_for('parkings.get_parqueadero_disponibilidad'))
+                else:
+                    return redirect(url_for('dashboard.inicio'))
             else:
                 flash('El usuario o contraseña es inválido. Por favor verifique!', category='error')
         else:
@@ -83,7 +87,7 @@ def register():
                 db.session.add(new_user)
                 
                 token = generate_confirmation_token(new_user.email)
-                confirm_url = url_for('auth.confirm_email', token=token, _external=True)
+                confirm_url = url_for('auth.confirm_email', token=token, _external=True, _scheme='https')
                 html = render_template('sitio/user/confirmar_email.html', confirm_url=confirm_url)
                 subject = "PoliParkingSystem. Confirmación de correo."
                 send_email(new_user.email, subject, html)
@@ -97,7 +101,11 @@ def register():
         return render_template('/admin/register.html')
 
 @auth.route('/register/admin', methods=['GET', 'POST'])
+@login_required
 def register_admin():
+    if session['user']['rol'] != 3:
+        return render_template('/sitio/Error404.html'), 404
+
     list_parking = Parqueadero.query.with_entities(Parqueadero.id, Parqueadero.nombre).all()
     lista_roles = Rol.query.with_entities(Rol.id, Rol.nombre).all()
     list_func = TipoFuncionario.query.all()
@@ -162,7 +170,7 @@ def register_admin():
                 db.session.add(new_user)
                 
                 token = generate_confirmation_token(new_user.email)
-                confirm_url = url_for('auth.confirm_email', token=token, _external=True)
+                confirm_url = url_for('auth.confirm_email', token=token, _external=True, _scheme='https')
                 html = render_template('sitio/user/confirmar_email.html', confirm_url=confirm_url)
                 subject = "PoliParkingSystem. Confirmación de correo."
                 send_email(new_user.email, subject, html)
@@ -284,6 +292,7 @@ def change_password_post():
 
 
 @auth.route('/perfil/modificar', methods=['GET', 'POST'])
+@login_required
 def modificar_perfil():
     tmp_usuario = (session['user']['usuario'])
     user = User.query.filter_by(usuario=tmp_usuario).first()

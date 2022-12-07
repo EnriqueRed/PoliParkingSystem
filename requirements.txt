@@ -11,4 +11,5 @@ python-dateutil
 pandas
 flask-mail
 python-dotenv
-secure
+pdfkit
+wkhtmltopdf

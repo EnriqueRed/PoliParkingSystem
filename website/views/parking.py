@@ -1,5 +1,3 @@
-from cmath import e
-from tkinter import E
 from flask import Blueprint, current_app, render_template, jsonify, request, redirect, session, url_for
 from flask_login import login_required
 from website.models import Parqueadero, User
@@ -12,6 +10,9 @@ parkings = Blueprint('parkings', __name__)
 @parkings.route('/parqueadero', methods=['GET'])
 @login_required
 def get_parqueadero():
+    if session['user']['rol'] != 3:
+        return render_template('/sitio/Error404.html'), 404
+
     parking_list = Parqueadero.query.with_entities(Parqueadero.id, Parqueadero.nombre, Parqueadero.capacidad_carros, Parqueadero.capacidad_motos, Parqueadero.direccion)
 
     contexto = {"lista_parqueadero": parking_list}    
@@ -21,6 +22,9 @@ def get_parqueadero():
 @parkings.route('/parqueadero/crear', methods=['POST'])
 @login_required
 def crear_parqueadero():
+    if session['user']['rol'] != 3:
+        return render_template('/sitio/Error404.html'), 404
+
     if request.method == 'POST':
         tmp_nombre = request.form.get('nombre')
         tmp_c_carros = request.form.get('c_carros')
@@ -43,6 +47,9 @@ def crear_parqueadero():
 @parkings.route('/parqueadero/editar', methods=['POST'])
 @login_required
 def editar_parqueadero():
+    if session['user']['rol'] != 3:
+        return render_template('/sitio/Error404.html'), 404
+
     if request.method == 'POST':
         id_p = request.form.get('id_p')
         nombre = request.form.get('nombre')
@@ -68,6 +75,9 @@ def editar_parqueadero():
 @parkings.route('/ajax_get_parqueadero_id', methods=['GET','POST'])
 @login_required
 def get_parqueadero_id():
+    if session['user']['rol'] != 3:
+        return render_template('/sitio/Error404.html'), 404
+
     if request.form['parqueaderoid']:
         parqueaderoid = int(request.form['parqueaderoid'])
     else:
@@ -83,6 +93,9 @@ def get_parqueadero_id():
 @parkings.route('/ajax_delete_parqueadero_id', methods=['GET','POST'])
 @login_required
 def delete_parqueadero_id():
+    if session['user']['rol'] != 3:
+        return render_template('/sitio/Error404.html'), 404
+
     if request.form['parqueaderoid']:
         parqueaderoid = int(request.form['parqueaderoid'])
     else:
