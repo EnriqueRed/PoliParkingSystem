@@ -1,7 +1,7 @@
 {
     "_meta": {
         "hash": {
-            "sha256": "b04db2077bbf51623f30feb0684f1b10bf29290fa8022f261efec737b682c60e"
+            "sha256": "0514d46bf4b618dbdeeb09082dfc69286b05fd09f72e7398994c5dfa9dbb20aa"
         },
         "pipfile-spec": 6,
         "requires": {
@@ -153,6 +153,13 @@
             "markers": "python_version >= '3' and platform_machine == 'aarch64' or (platform_machine == 'ppc64le' or (platform_machine == 'x86_64' or (platform_machine == 'amd64' or (platform_machine == 'AMD64' or (platform_machine == 'win32' or platform_machine == 'WIN32')))))",
             "version": "==2.0.1"
         },
+        "headless-pdfkit": {
+            "hashes": [
+                "sha256:2fd24c5ca8b51d5f55aae3732010824b568c2de4141ca9853e7bf6169c194250"
+            ],
+            "index": "pypi",
+            "version": "==0.1.5"
+        },
         "importlib-metadata": {
             "hashes": [
                 "sha256:d5059f9f1e8e41f80e9c56c2ee58811450c31984dfa625329ffd7c0dad88a73b",
@@ -163,11 +170,11 @@
         },
         "importlib-resources": {
             "hashes": [
-                "sha256:c01b1b94210d9849f286b86bb51bcea7cd56dde0600d8db721d7b81330711668",
-                "sha256:ee17ec648f85480d523596ce49eae8ead87d5631ae1551f913c0100b5edd3437"
+                "sha256:32bb095bda29741f6ef0e5278c42df98d135391bee5f932841efc0041f748dc3",
+                "sha256:c09b067d82e72c66f4f8eb12332f5efbebc9b007c0b6c40818108c9870adc363"
             ],
             "markers": "python_version < '3.9'",
-            "version": "==5.10.0"
+            "version": "==5.10.1"
         },
         "itsdangerous": {
             "hashes": [
@@ -312,7 +319,6 @@
                 "sha256:a7a4ca0d978e44fa8310c4909f087052430a6e8e0b1dd7ceef657f139789f96f",
                 "sha256:cc122e5aed594198ff7aaa566f2950d2163763576ab891c161bb1f6c630f5a8e"
             ],
-            "index": "pypi",
             "version": "==1.0.0"
         },
         "psycopg2": {
@@ -365,14 +371,6 @@
             ],
             "index": "pypi",
             "version": "==2022.6"
-        },
-        "secure": {
-            "hashes": [
-                "sha256:6e30939d8f95bf3b8effb8a36ebb5ed57f265daeeae905e3aa9677ea538ab64e",
-                "sha256:a93b720c7614809c131ca80e477263140107c6c212829d0a6e1f7bc8d859c608"
-            ],
-            "index": "pypi",
-            "version": "==0.3.0"
         },
         "six": {
             "hashes": [

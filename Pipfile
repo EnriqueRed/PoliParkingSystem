@@ -17,6 +17,7 @@ python-dateutil = "*"
 pandas = "*"
 flask-mail = "*"
 python-dotenv = "*"
+headless-pdfkit = "*"
 
 [dev-packages]
 

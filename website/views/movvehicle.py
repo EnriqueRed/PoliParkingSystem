@@ -5,6 +5,8 @@ from .. import db
 from datetime import date, datetime
 import pytz, os, pdfkit, base64
 from sqlalchemy.sql import text
+from headless_pdfkit import generate_pdf
+
 
 mov_vehicles = Blueprint('mov_vehicles', __name__)
 
@@ -100,18 +102,23 @@ def ajax_view_invoice():
     contexto = {"report": report} 
 
     # Generación de la factura en PDF
-    config = pdfkit.configuration(wkhtmltopdf=os.getenv("WKHTMLTOPDF_DIRECTORY"))
-    rendered = render_template('/sitio/invoice_report/invoice.html', context=contexto)
-    pdf = pdfkit.from_string(rendered, False, configuration=config) 
+    try:
+        config = pdfkit.configuration(wkhtmltopdf=os.getenv("WKHTMLTOPDF_DIRECTORY"))
+
+        base64pdf = ''
+        rendered = render_template('/sitio/invoice_report/invoice.html', context=contexto)
+        pdf = pdfkit.from_string(rendered, False, configuration=config)
+        response = make_response(pdf)
+
+        response.headers['Content-Type'] = 'application/pdf'
+        # response.headers['Content-Disposition'] = 'attachment; filename=Factura.pdf'
+        response.headers['Content-Disposition'] = 'inline; filename=Factura.pdf'
+
+        b64pdf = base64.b64encode(response.get_data())
+        base64pdf = 'data:application/pdf;base64,' + b64pdf.decode('utf-8')
+    except BaseException as error:
+        return str(error)
     
-    response = make_response(pdf)
-    response.headers['Content-Type'] = 'application/pdf'
-    # response.headers['Content-Disposition'] = 'attachment; filename=Factura.pdf'
-    response.headers['Content-Disposition'] = 'inline; filename=Factura.pdf'
-
-    b64pdf = base64.b64encode(response.get_data())
-    base64pdf = 'data:application/pdf;base64,' + b64pdf.decode('utf-8')
-
     return base64pdf
 
 @mov_vehicles.route("/mov_vehiculo/registrar", methods=['POST'])
