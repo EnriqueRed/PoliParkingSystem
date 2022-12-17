@@ -1,7 +1,7 @@
 from flask import Blueprint, render_template, request, flash, redirect, url_for, session
 from werkzeug.security import generate_password_hash, check_password_hash
 from flask_login import login_user, login_required, logout_user, current_user
-from .models import User, Rol, Parqueadero, TipoFuncionario
+from .models import User, Rol, Parqueadero, TipoFuncionario, Vehiculo
 from .business.email_send import generate_confirmation_token, send_email, confirm_token
 import base64
 from . import db
@@ -14,7 +14,7 @@ def login():
         username = request.form.get('username')
         password = request.form.get('password')
 
-        user = User.query.filter_by(usuario=username).first_or_404()
+        user = User.query.filter_by(usuario=username).first()
         
         if user:
             if not user.confirmed:
@@ -23,17 +23,28 @@ def login():
             if check_password_hash(user.password, password):
                 login_user(user, remember=True)
 
+                default_id = 0
+                vehicles_ids = '('
+
+                obj_vehicle = Vehiculo.query.filter_by(user_id=user.id)
+                for vehicle in obj_vehicle:
+                    default_id += 1
+                    vehicles_ids += str(vehicle.id) + ','
+
+                if default_id:
+                    vehicles_ids = vehicles_ids[:-1] + ')'
+                else:
+                    vehicles_ids += str(default_id) + ')'
+
                 session['user'] = {'usuario': user.usuario,
                                     'nombre': user.nombre,
                                     'rol': user.rol_id,
                                     'propietario': user.es_propietario,
                                     'parqueadero': user.parqueadero_id,
-                                    'tipo_funcionario_id': user.tipo_funcionario_id} 
+                                    'tipo_funcionario_id': user.tipo_funcionario_id,
+                                    'vehiculos': vehicles_ids} 
 
-                if user.rol_id == 1:
-                    return redirect(url_for('parkings.get_parqueadero_disponibilidad'))
-                else:
-                    return redirect(url_for('dashboard.inicio'))
+                return redirect(url_for('dashboard.inicio'))
             else:
                 flash('El usuario o contraseña es inválido. Por favor verifique!', category='error')
         else:
@@ -83,7 +94,8 @@ def register():
                                 password= generate_password_hash(password, method='sha256'),
                                 es_propietario= False,
                                 parqueadero_id= parqueadero,
-                                rol_id= rol_id)
+                                rol_id= rol_id,
+                                tipo_funcionario_id= 2)
                 db.session.add(new_user)
                 
                 token = generate_confirmation_token(new_user.email)

@@ -79,7 +79,10 @@ def ajax_view_invoice():
     if not obj_user:
         tipo_f = 1
     else:
-        tipo_f = obj_user.tipo_funcionario_id
+        if not obj_user.tipo_funcionario_id:
+            tipo_f = 2
+        else:
+            tipo_f = obj_user.tipo_funcionario_id
 
     sql = '''
         select C.nombre, C.nit, C.direccion, A.id::varchar, B.placa, D.nombre as tarifa, 
@@ -157,7 +160,7 @@ def register_mov():
 
         if hora_out:
             if vehicle_mov:
-                if vehicle_mov.estado == 'salida':
+                if vehicle_mov.estado == 'salida' or not vehicle_mov.fecha_ingreso:
                     flash('No es posible registrar salida de un vehículo que ya no se encuentra en el parqueadero. Por favor verifique!', category='error')
                     mov_vehiculo = MovimientoVehiculo.query.with_entities(MovimientoVehiculo.id, 
                                                             MovimientoVehiculo.estado, MovimientoVehiculo.placa,
@@ -188,10 +191,15 @@ def register_mov():
                 vehiculo_id = None
                 obj_tarifa = Tarifa.query.filter(Tarifa.tipo_vehiculo_id==vehicle_type, Tarifa.tipo_funcionario_id==1).first()
             else:
+                obj_user = User.query.filter(User.id==obj_vehicle.user_id).first()
                 vehiculo_id =  obj_vehicle.id
 
-                obj_user = User.query.filter(User.id==obj_vehicle.user_id).first()
-                obj_tarifa = Tarifa.query.filter(Tarifa.tipo_vehiculo_id==obj_vehicle.tipo_vehiculo_id, Tarifa.tipo_funcionario_id==obj_user.tipo_funcionario_id).first()
+                if not obj_user.tipo_funcionario_id:
+                    tipo_func = 2
+                else:
+                    tipo_func = obj_user.tipo_funcionario_id
+                
+                obj_tarifa = Tarifa.query.filter(Tarifa.tipo_vehiculo_id==obj_vehicle.tipo_vehiculo_id, Tarifa.tipo_funcionario_id== tipo_func).first()
 
             if not obj_tarifa:
                 flash('No se encontró una tarifa. Por favor verifique!', category='error')

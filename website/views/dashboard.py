@@ -15,11 +15,14 @@ dashboard = Blueprint('dashboard', __name__)
 @login_required
 def inicio():
     if session['user']['rol'] == 1:
-        return render_template('/sitio/Error404.html'), 404
+        mov_in = []
+        mov_out = []
+        users_i = []
+    else:
+        mov_in = get_vehiculo_in(1,2)
+        mov_out = get_vehiculo_out(1,2)
+        users_i = get_users_indic(1,2)
 
-    mov_in = get_vehiculo_in(1,2)
-    mov_out = get_vehiculo_out(1,2)
-    users_i = get_users_indic(1,2)
     mov_r = get_recent_mov(1)
     data = get_trafico_vehiculo()
     dias_c = get_dias_concurridos()
@@ -192,20 +195,31 @@ def get_users_indic(return_context=0,optionid=0):
 @login_required
 def get_recent_mov(return_context=0):
     if session['user']['rol'] == 1:
-        return render_template('/sitio/Error404.html'), 404
-
-    sql = '''
-        select A.id, coalesce(C.nombre, 'No registrado') as nombre, A.placa,
-                coalesce(substring(cast(A.fecha_ingreso as varchar(50)), 12,5), '-') as ingreso,
-                coalesce(substring(cast(A.fecha_salida  as varchar(50)), 12,5), '-') as salida,
-                A.estado 
-        from movimiento_vehiculo A
-        left join vehiculo B on A.vehiculo_id = B.id 
-        left join "user" C on B.user_id = C.id
-        where A.parqueadero_id = %s
-        order by estado asc, id desc
-        limit 5
-    ''' % (session['user']['parqueadero'])
+        sql = '''
+            select A.id, coalesce(C.nombre, 'No registrado') as nombre, A.placa,
+                    coalesce(substring(cast(A.fecha_ingreso as varchar(50)), 12,5), '-') as ingreso,
+                    coalesce(substring(cast(A.fecha_salida  as varchar(50)), 12,5), '-') as salida,
+                    A.estado 
+            from movimiento_vehiculo A
+            left join vehiculo B on A.vehiculo_id = B.id 
+            left join "user" C on B.user_id = C.id
+            where A.vehiculo_id in %s
+            order by estado asc, id desc
+            limit 5
+        ''' % (session['user']['vehiculos'])
+    else:
+        sql = '''
+            select A.id, coalesce(C.nombre, 'No registrado') as nombre, A.placa,
+                    coalesce(substring(cast(A.fecha_ingreso as varchar(50)), 12,5), '-') as ingreso,
+                    coalesce(substring(cast(A.fecha_salida  as varchar(50)), 12,5), '-') as salida,
+                    A.estado 
+            from movimiento_vehiculo A
+            left join vehiculo B on A.vehiculo_id = B.id 
+            left join "user" C on B.user_id = C.id
+            where A.parqueadero_id = %s
+            order by estado asc, id desc
+            limit 5
+        ''' % (session['user']['parqueadero'])
 
     engine = current_app.config.get('engine')
     with engine.connect().execution_options(autocommit=True) as conn:
@@ -224,11 +238,34 @@ def get_recent_mov(return_context=0):
 @login_required
 def get_trafico_vehiculo():
     if session['user']['rol'] == 1:
-        return render_template('/sitio/Error404.html'), 404
+        vehicles = session['user']['vehiculos']
 
-    park_id = session['user']['parqueadero']
+        sql = '''
+            select count(A.id) as cant, '06:00 - 10:00' as rango
+            from movimiento_vehiculo A
+            where A.vehiculo_id in %s
+                    and to_timestamp(substring(cast(A.fecha_ingreso as varchar(50)), 12,5), 'HH24:MI')::time between '06:00' and '10:00'
+            union all
+            select count(A.id) as cant, '10:00 - 14:00' as rango
+            from movimiento_vehiculo A
+            where A.vehiculo_id in %s
+                    and to_timestamp(substring(cast(A.fecha_ingreso as varchar(50)), 12,5), 'HH24:MI')::time between '10:00' and '14:00'
+            union all
+            select count(A.id) as cant, '14:00 - 18:00' as rango
+            from movimiento_vehiculo A
+            where A.vehiculo_id in %s
+                    and to_timestamp(substring(cast(A.fecha_ingreso as varchar(50)), 12,5), 'HH24:MI')::time between '14:00' and '18:00'
+            union all
+            select count(A.id) as cant, '18:00 - 22:00' as rango
+            from movimiento_vehiculo A
+            where A.vehiculo_id in %s
+                    and to_timestamp(substring(cast(A.fecha_ingreso as varchar(50)), 12,5), 'HH24:MI')::time between '18:00' and '22:00'
+        ''' % (vehicles, vehicles, vehicles, vehicles) 
 
-    sql = '''
+    else:
+        park_id = session['user']['parqueadero']
+
+        sql = '''
             select count(A.id) as cant, '06:00 - 10:00' as rango
             from movimiento_vehiculo A
             where A.parqueadero_id = %s
@@ -248,7 +285,7 @@ def get_trafico_vehiculo():
             from movimiento_vehiculo A
             where A.parqueadero_id = %s
                     and to_timestamp(substring(cast(A.fecha_ingreso as varchar(50)), 12,5), 'HH24:MI')::time between '18:00' and '22:00'
-    ''' % (park_id, park_id, park_id, park_id) 
+        ''' % (park_id, park_id, park_id, park_id) 
 
     engine = current_app.config.get('engine')
     with engine.connect().execution_options(autocommit=True) as conn:
@@ -270,20 +307,31 @@ def get_trafico_vehiculo():
 @login_required
 def get_dias_concurridos():
     if session['user']['rol'] == 1:
-        return render_template('/sitio/Error404.html'), 404
-        
-    sql = '''
-        select * 
-        from 
-        (
-            select fecha_ingreso::TIMESTAMP::DATE as fecha, count(A.id) as cantidad, sum(minutos) / 60 as horas
-            from movimiento_vehiculo A
-            where A.parqueadero_id = %s
-            group by fecha_ingreso::TIMESTAMP::DATE 
-        ) A
-        order by horas desc
-        limit 3
-    ''' % (session['user']['parqueadero'])
+        sql = '''
+            select * 
+            from 
+            (
+                select fecha_ingreso::TIMESTAMP::DATE as fecha, count(A.id) as cantidad, sum(minutos) / 60 as horas
+                from movimiento_vehiculo A
+                where A.vehiculo_id in %s
+                group by fecha_ingreso::TIMESTAMP::DATE 
+            ) A
+            order by horas desc
+            limit 3
+        ''' % (session['user']['vehiculos'])
+    else:
+        sql = '''
+            select * 
+            from 
+            (
+                select fecha_ingreso::TIMESTAMP::DATE as fecha, count(A.id) as cantidad, sum(minutos) / 60 as horas
+                from movimiento_vehiculo A
+                where A.parqueadero_id = %s
+                group by fecha_ingreso::TIMESTAMP::DATE 
+            ) A
+            order by horas desc
+            limit 3
+        ''' % (session['user']['parqueadero'])
     
     engine = current_app.config.get('engine')
     with engine.connect().execution_options(autocommit=True) as conn:

@@ -100,7 +100,7 @@
         <aside id="sidebar" class="sidebar">
 
             <ul class="sidebar-nav" id="sidebar-nav">
-                {% if session.user['rol'] != 1 %}
+                
                 <li class="nav-item">
                     <a class="nav-link " href="/inicio">
                     <i class="bi bi-grid"></i>
@@ -108,6 +108,7 @@
                     </a>
                 </li><!-- End Dashboard Nav -->
                 
+                {% if session.user['rol'] != 1 %}
                 <li class="nav-item">
                     <a class="nav-link collapsed" data-bs-target="#components-nav" data-bs-toggle="collapse" href="#">
                     <i class="bi bi-menu-button-wide"></i><span>Movimiento Vehículos</span><i class="bi bi-chevron-down ms-auto"></i>
@@ -121,7 +122,6 @@
                     </ul>
                 </li><!-- End Movimiento Vehículos Nav -->
                 {% endif %}
-
                 
                 <li class="nav-heading">Páginas</li>
                 {% if session.user['rol'] == 3 %}

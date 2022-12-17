@@ -13,7 +13,7 @@ def get_parqueadero():
     if session['user']['rol'] != 3:
         return render_template('/sitio/Error404.html'), 404
 
-    parking_list = Parqueadero.query.with_entities(Parqueadero.id, Parqueadero.nombre, Parqueadero.capacidad_carros, Parqueadero.capacidad_motos, Parqueadero.direccion)
+    parking_list = Parqueadero.query.with_entities(Parqueadero.id, Parqueadero.nombre, Parqueadero.nit, Parqueadero.capacidad_carros, Parqueadero.capacidad_motos, Parqueadero.direccion)
 
     contexto = {"lista_parqueadero": parking_list}    
 
@@ -29,13 +29,17 @@ def crear_parqueadero():
         tmp_nombre = request.form.get('nombre')
         tmp_c_carros = request.form.get('c_carros')
         tmp_c_motos = request.form.get('c_motos')
-        tmp_direccion = request.form.get('direccion')
+        tmp_direccion = request.form.get('direccion') 
+        tmp_url_map = request.form.get('url_map')
+        tmp_nit = request.form.get('nit') 
 
         try:
             new_parking = Parqueadero(nombre= tmp_nombre,
+                                    nit= tmp_nit,
                                     capacidad_carros= tmp_c_carros,
                                     capacidad_motos= tmp_c_motos,
-                                    direccion= tmp_direccion)
+                                    direccion= tmp_direccion,
+                                    url_mapa= tmp_url_map)
             db.session.add(new_parking)
 
             db.session.commit()
@@ -57,9 +61,11 @@ def editar_parqueadero():
         c_motos = request.form.get('c_motos')
         direccion = request.form.get('direccion')
         url_map = request.form.get('url_map')
+        nit = request.form.get('nit')
 
         try:
             tmp_parking = Parqueadero.query.filter(Parqueadero.id == id_p).first()
+            tmp_parking.nit= nit
             tmp_parking.nombre= nombre
             tmp_parking.capacidad_carros= c_carros
             tmp_parking.capacidad_motos= c_motos
@@ -83,7 +89,7 @@ def get_parqueadero_id():
     else:
         parqueaderoid = 0
 
-    parqueadero = Parqueadero.query.with_entities(Parqueadero.id, Parqueadero.nombre, Parqueadero.capacidad_carros, 
+    parqueadero = Parqueadero.query.with_entities(Parqueadero.id, Parqueadero.nombre, Parqueadero.nit, Parqueadero.capacidad_carros, 
                                                 Parqueadero.capacidad_motos, Parqueadero.direccion, Parqueadero.url_mapa).filter(Parqueadero.id == parqueaderoid).first()
 
     contexto = {"parking": parqueadero}    

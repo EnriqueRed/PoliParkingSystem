@@ -7,11 +7,4 @@ main = Blueprint('main', __name__)
 
 @main.route('/')
 def login():
-    rol_id = (session['user']['rol'])
-    if rol_id != 1:
-        return redirect(url_for('dashboard.inicio'))
-    else:
-        return redirect(url_for('parkings.get_parqueadero_disponibilidad'))
-
-
-
+    return redirect(url_for('dashboard.inicio'))
