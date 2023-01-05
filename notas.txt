@@ -1,0 +1,16 @@
+-------------------------------------------------------------------------------------------
+------------------------------------ PoliParkingSystem ------------------------------------
+-------------------------------------------------------------------------------------------
+-- Desarrollado por: Enrique Redondo                                                     --
+--                   Karen Cely                                                          --
+-------------------------------------------------------------------------------------------
+
+Al aplicar migraciones el usuario que se crea por defecto para poder entrar al sistema es:
+Usuario:    admin
+Contraseña: AdminPSystem1
+
+Para envios de correo se usa la siguiente cuenta:
+Usuario:    poliparkingsystem@gmail.com
+Contraseña: Poli_123
+
+-------------------------------------------------------------------------------------------

@@ -14,7 +14,9 @@ def get_tarifa():
         return render_template('/sitio/Error404.html'), 404
 
     tarifa_list = Tarifa.query.join(TipoFuncionario).join(Tipovehiculo).with_entities(Tarifa.id, Tarifa.nombre, Tipovehiculo.nombre.label("tipo_v"),
-                                            Tarifa.valor_minuto, Tarifa.valor_plena, Tarifa.valor_mensualidad, TipoFuncionario.nombre.label("tipo_f"))
+                                            Tarifa.valor_minuto, Tarifa.valor_plena, Tarifa.valor_mensualidad, TipoFuncionario.nombre.label("tipo_f")).filter(
+                                                Tarifa.parqueadero_id == session['user']['parqueadero']
+                                            )
 
     list_tipov = Tipovehiculo.query.all()
     list_func = TipoFuncionario.query.all()
@@ -38,6 +40,7 @@ def crear_tarifa():
         valor_plena = request.form.get('valor_plena')
         valor_mensualidad = request.form.get('valor_mensualidad')
         tipo_f = int(request.form.get('tipo_f'))
+        parqueadero_id = session['user']['parqueadero']
 
         try:
             new_tariff = Tarifa(nombre= nombre,
@@ -45,7 +48,8 @@ def crear_tarifa():
                                 valor_minuto= valor_minuto,
                                 valor_plena= valor_plena,
                                 valor_mensualidad= valor_mensualidad,
-                                tipo_funcionario_id= tipo_f)
+                                tipo_funcionario_id= tipo_f,
+                                parqueadero_id= parqueadero_id)
             db.session.add(new_tariff)
 
             db.session.commit()
@@ -97,7 +101,9 @@ def get_tarifa_id():
 
     tarifa = Tarifa.query.join(TipoFuncionario).join(Tipovehiculo).with_entities(Tarifa.id, Tarifa.nombre, Tipovehiculo.nombre.label("tipo_v"),
                                             Tarifa.valor_minuto, Tarifa.valor_plena, Tarifa.valor_mensualidad, Tipovehiculo.id.label("tipo_v_id"),
-                                            TipoFuncionario.nombre.label("tipo_f"), TipoFuncionario.id.label("tipo_f_id")).filter(Tarifa.id == tarifaid).first()
+                                            TipoFuncionario.nombre.label("tipo_f"), TipoFuncionario.id.label("tipo_f_id")).filter(Tarifa.id == tarifaid).filter(
+                                                Tarifa.parqueadero_id == session['user']['parqueadero']
+                                            ).first()
 
     list_tipov = Tipovehiculo.query.all()
     list_func = TipoFuncionario.query.all()

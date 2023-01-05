@@ -83,6 +83,7 @@ class Tarifa(db.Model):
     valor_plena = db.Column(db.Numeric(10,2))
     valor_mensualidad = db.Column(db.Numeric(10,2))
     tipo_funcionario_id = db.Column(db.Integer, db.ForeignKey('tipo_funcionario.id'))
+    parqueadero_id = db.Column(db.Integer, db.ForeignKey('parqueadero.id'))
 
 # Notificaciones --------------------------------------------------------------------------
 class Notificacion(db.Model):

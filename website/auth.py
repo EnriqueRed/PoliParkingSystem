@@ -36,11 +36,15 @@ def login():
                 else:
                     vehicles_ids += str(default_id) + ')'
 
+                parqueadero_id = user.parqueadero_id
+                if not parqueadero_id:
+                    parqueadero_id = 0
+
                 session['user'] = {'usuario': user.usuario,
                                     'nombre': user.nombre,
                                     'rol': user.rol_id,
                                     'propietario': user.es_propietario,
-                                    'parqueadero': user.parqueadero_id,
+                                    'parqueadero': parqueadero_id,
                                     'tipo_funcionario_id': user.tipo_funcionario_id,
                                     'vehiculos': vehicles_ids} 
 

@@ -189,7 +189,9 @@ def register_mov():
             obj_vehicle = Vehiculo.query.filter(Vehiculo.placa==placa).first()
             if not obj_vehicle:
                 vehiculo_id = None
-                obj_tarifa = Tarifa.query.filter(Tarifa.tipo_vehiculo_id==vehicle_type, Tarifa.tipo_funcionario_id==1).first()
+                obj_tarifa = Tarifa.query.filter(Tarifa.tipo_vehiculo_id==vehicle_type, Tarifa.tipo_funcionario_id==1).filter(
+                                                Tarifa.parqueadero_id == session['user']['parqueadero']
+                                            ).first()
             else:
                 obj_user = User.query.filter(User.id==obj_vehicle.user_id).first()
                 vehiculo_id =  obj_vehicle.id
@@ -199,7 +201,9 @@ def register_mov():
                 else:
                     tipo_func = obj_user.tipo_funcionario_id
                 
-                obj_tarifa = Tarifa.query.filter(Tarifa.tipo_vehiculo_id==obj_vehicle.tipo_vehiculo_id, Tarifa.tipo_funcionario_id== tipo_func).first()
+                obj_tarifa = Tarifa.query.filter(Tarifa.tipo_vehiculo_id==obj_vehicle.tipo_vehiculo_id, Tarifa.tipo_funcionario_id== tipo_func).filter(
+                                                Tarifa.parqueadero_id == session['user']['parqueadero']
+                                            ).first()
 
             if not obj_tarifa:
                 flash('No se encontró una tarifa. Por favor verifique!', category='error')
