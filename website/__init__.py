@@ -27,12 +27,12 @@ def create_app():
     app.config['SECURITY_PASSWORD_SALT'] = 'W4yyhZVAPYkF03NR9cuMBJ2jxGDsVT'
     app.config['SQLALCHEMY_DATABASE_URI'] = db_uri
     app.config['engine'] = db.create_engine(db_uri,{})
-    app.config['MAIL_SERVER']=os.getenv("MAIL_SERVER")
-    app.config['MAIL_PORT'] = os.getenv("MAIL_PORT")
-    app.config['MAIL_USERNAME'] = os.getenv("MAIL_USERNAME")
-    app.config['MAIL_DEFAULT_SENDER'] = os.getenv("MAIL_USERNAME")
-    app.config['MAIL_PASSWORD'] = os.getenv("MAIL_PASSWORD")
-    app.config['MAIL_USE_TLS'] = os.getenv("MAIL_USE_TLS")
+    app.config['MAIL_SERVER']="smtp.gmail.com"
+    app.config['MAIL_PORT'] = 587
+    app.config['MAIL_USERNAME'] = "poliparkingsystem@gmail.com"
+    app.config['MAIL_DEFAULT_SENDER'] = "poliparkingsystem@gmail.com"
+    app.config['MAIL_PASSWORD'] = "ywnzgiemwogywpcx"
+    app.config['MAIL_USE_TLS'] = True
     db.init_app(app)
 
     # https://github.com/tschoonj/GTK-for-Windows-Runtime-Environment-Installer/releases

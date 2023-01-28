@@ -112,7 +112,9 @@ def register():
                 flash('Un mensaje de confirmación de cuenta ha sido enviado a tu correo', 'success')
                 return redirect(url_for('auth.login'))
             except BaseException as error:
+                flash(str(error), category='error')
                 db.session.rollback()
+                return render_template('/admin/register.html')
     else:
         return render_template('/admin/register.html')
 

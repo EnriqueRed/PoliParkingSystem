@@ -106,7 +106,7 @@ def ajax_view_invoice():
 
     # Generación de la factura en PDF
     try:
-        config = pdfkit.configuration(wkhtmltopdf=os.getenv("WKHTMLTOPDF_DIRECTORY"))
+        config = pdfkit.configuration(wkhtmltopdf='/usr/bin/wkhtmltopdf')
 
         base64pdf = ''
         rendered = render_template('/sitio/invoice_report/invoice.html', context=contexto)

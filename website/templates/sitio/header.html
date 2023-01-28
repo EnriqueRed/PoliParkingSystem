@@ -124,7 +124,7 @@
                 {% endif %}
                 
                 <li class="nav-heading">Páginas</li>
-                {% if session.user['rol'] == 3 %}
+                {% if session.user['rol'] != 1 %}
                 <li class="nav-item">
                     <a class="nav-link collapsed" data-bs-target="#admin-nav" data-bs-toggle="collapse" href="#">
                     <i class="ri-admin-line"></i><span>Administrador</span><i class="bi bi-chevron-down ms-auto"></i>
